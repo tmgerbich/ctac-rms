@@ -20,6 +20,12 @@ public class TableService {
                 loadTables();
             }
         }
+        if (newDay) {
+            for(TableSetup tableSetup : TableSetup.values()){
+                tables.put(tableSetup.name(), new Table(tableSetup));
+            }
+
+        }
         saveTables();
     }
 

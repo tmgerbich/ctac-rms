@@ -16,6 +16,7 @@ public class Order implements Serializable {
     public Order(boolean takeOut, ArrayList<MenuItem> items) {
         this.takeOut = takeOut;
         this.items = items;
+        this.table = null;
         calculatePrice();
         calculatePrepTime();
         this.status = OrderStatus.WAITING;
@@ -24,6 +25,7 @@ public class Order implements Serializable {
     public Order(Table table, ArrayList<MenuItem> items) {
         this.table = table;
         this.items = items;
+        this.takeOut = false;
         calculatePrice();
         calculatePrepTime();
         this.status = OrderStatus.WAITING;
@@ -61,5 +63,9 @@ public class Order implements Serializable {
 
     private Duration getPrepTime() {
         return prepTime;
+    }
+
+    public Table getTable() {
+        return table;
     }
 }

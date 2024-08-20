@@ -37,6 +37,16 @@ public class OrderService {
         }
     }
 
+    // Get a menu item by ID
+    public Order getOrder(int orderId) {
+        for (Map.Entry<Integer, Order> entry : orders.entrySet()) {
+            if (entry.getKey().equals(orderId)) {
+                return orders.get(orderId);
+            }
+        }
+        return null;
+    }
+
     public List<Order> getAllOrders() {
         return orders.values().stream().collect(Collectors.toList());
     }

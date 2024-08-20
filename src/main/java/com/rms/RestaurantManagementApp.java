@@ -1,6 +1,8 @@
 package com.rms;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,10 +13,9 @@ public class RestaurantManagementApp extends JFrame {
     private Menu menu;
     private Inventory inventory;
 
-
     public RestaurantManagementApp(User currentUser) {
         this.currentUser = currentUser;
-        this.tableService = new TableService(false); //fix this later, hard coding in not a new day
+        this.tableService = new TableService(true); //fix this later, hard coding in a new day
         this.orderService = new OrderService(false); //fix this later, hard coding in not a new day
         this.menu = new Menu();
         this.inventory = new Inventory();
@@ -26,6 +27,7 @@ public class RestaurantManagementApp extends JFrame {
         TablePanel tablePanel = new TablePanel(tableService, orderService, menu, inventory);
         TakeoutPanel takeoutPanel = new TakeoutPanel(orderService, menu, inventory);
         MenuManagementPanel menuPanel = new MenuManagementPanel(menu, inventory);
+        OrderManagementPanel orderPanel = new OrderManagementPanel(menu, inventory, orderService);
 
         // Create a menu bar with a logout option
         JMenuBar menuBar = new JMenuBar();
@@ -51,9 +53,27 @@ public class RestaurantManagementApp extends JFrame {
         tabbedPane.addTab("Table Orders", tablePanel);
         tabbedPane.addTab("Takeout Orders", takeoutPanel);
         tabbedPane.addTab("Menu Management", menuPanel);
+        tabbedPane.addTab("Order Management", orderPanel);
 
-
-        // Add other panels here as needed in the future (e.g., Menu Management, Order Processing)
+        // Add ChangeListener to the tabbed pane
+        tabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int selectedIndex = tabbedPane.getSelectedIndex();
+                switch (selectedIndex) {
+                    case 2: // Table Orders tab
+                        break;
+                    case 3: // Takeout Orders tab
+                        break;
+                    case 4: // Menu Management tab
+                        break;
+                    case 5: // Order Management tab
+                        orderPanel.updateOrderTable();
+                        break;
+                    // Add cases for other tabs if needed
+                }
+            }
+        });
 
         add(tabbedPane);
     }

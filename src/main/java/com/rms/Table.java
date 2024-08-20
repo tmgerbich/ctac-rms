@@ -1,6 +1,8 @@
 package com.rms;
 
-public class Table {
+import java.io.Serializable;
+
+public class Table implements Serializable {
     private TableSetup tableSetup;
     private TableStatus tableStatus;
     private String customerName;
