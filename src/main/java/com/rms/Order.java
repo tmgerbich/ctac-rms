@@ -61,7 +61,7 @@ public class Order implements Serializable {
                 .reduce(Duration.ZERO, Duration::plus);
     }
 
-    private Duration getPrepTime() {
+    public Duration getPrepTime() {
         return prepTime;
     }
 

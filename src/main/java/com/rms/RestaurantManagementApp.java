@@ -15,8 +15,8 @@ public class RestaurantManagementApp extends JFrame {
 
     public RestaurantManagementApp(User currentUser) {
         this.currentUser = currentUser;
-        this.tableService = new TableService(true); //fix this later, hard coding in a new day
-        this.orderService = new OrderService(false); //fix this later, hard coding in not a new day
+        this.tableService = new TableService(true); //fix this later, hard coding in new day
+        this.orderService = new OrderService(true); //fix this later, hard coding in new day
         this.menu = new Menu();
         this.inventory = new Inventory();
         setTitle("Restaurant Management System");
@@ -62,6 +62,7 @@ public class RestaurantManagementApp extends JFrame {
                 int selectedIndex = tabbedPane.getSelectedIndex();
                 switch (selectedIndex) {
                     case 2: // Table Orders tab
+                        tablePanel.refreshTables();
                         break;
                     case 3: // Takeout Orders tab
                         break;

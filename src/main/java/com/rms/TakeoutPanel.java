@@ -63,8 +63,9 @@ public class TakeoutPanel extends JPanel {
 
         if (!items.isEmpty()) {
             Order order = new Order(true, (ArrayList<MenuItem>) items);
-            orderService.addOrder(order);
+            orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
             JOptionPane.showMessageDialog(this, "Order placed successfully");
         }
     }
+
 }

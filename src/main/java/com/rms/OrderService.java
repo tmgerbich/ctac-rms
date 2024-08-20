@@ -9,17 +9,14 @@ import java.util.stream.Collectors;
 public class OrderService {
     private Map<Integer, Order> orders;
     private int nextOrderId;
+    private OrderProcessor orderProcessor;
 
     public OrderService(boolean newDay) {
         this.orders = new HashMap<>();
+        this.orderProcessor = new OrderProcessor(4); // 4 threads
         if (!newDay) {
-            File file = new File("tables.dat");
-            // Check if the file exists
-            if (file.exists()) {
-                loadOrders();
-            }
-        }
-             else {
+            loadOrders();
+        } else {
             nextOrderId = 1;
         }
     }
@@ -27,13 +24,19 @@ public class OrderService {
     public void addOrder(Order order) {
         order.setOrderID(nextOrderId++);
         orders.put(order.getOrderID(), order);
+        orderProcessor.submitOrder(order); // Submit the order for processing
         saveOrders();
     }
 
+    // Shutdown the processor when the application stops
+    public void shutdownProcessor() {
+        orderProcessor.shutdown();
+    }
+
     public void updateOrderStatus(int orderId, OrderStatus status) {
-        if (orders.containsKey(orderId)) {
-            orders.get(orderId).setStatus(status);
-            saveOrders();
+            if (orders.containsKey(orderId)) {
+                orders.get(orderId).setStatus(status);
+                saveOrders();
         }
     }
 
@@ -53,8 +56,18 @@ public class OrderService {
 
     public List<Order> getActiveOrders() {
         return orders.values().stream()
-                .filter(order -> order.getStatus() != OrderStatus.COMPLETED)
+                .filter(order -> order.getStatus() != OrderStatus.CLEARED)
                 .collect(Collectors.toList());
+    }
+
+    public Order getOrderForTable(Table table) {
+        List<Order> activeOrders = getActiveOrders();
+        for (Order order : activeOrders) {
+            if (order.getTable().equals(table)) {
+                return order;
+            }
+        }
+        return null;
     }
 
     private void saveOrders() {
