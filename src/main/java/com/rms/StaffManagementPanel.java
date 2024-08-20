@@ -1,15 +1,23 @@
 package com.rms;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class StaffManagementPanel extends JPanel {
     private UserService userService;
     private User currentUser;
     private DefaultListModel<String> userModel;
     private JList<String> userList;
+
+    // Gabbi code for JTable
+    private DefaultTableModel tableModel;
+    private JTable userTable;
 
     public StaffManagementPanel(User currentUser) {
         this.currentUser = currentUser;
@@ -20,9 +28,19 @@ public class StaffManagementPanel extends JPanel {
         // User list
         userModel = new DefaultListModel<>();
         userList = new JList<>(userModel);
-        updateUserList();
+        updateUserList(); // This will now sync with JTable
 
-        add(new JScrollPane(userList), BorderLayout.CENTER);
+        // User table for structured display (new functionality)
+        String[] columnNames = {"Username", "Role"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        userTable = new JTable(tableModel);
+        updateUserTable(); // This will now sync with JList
+
+        // Add both the JList and JTable to the panel
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                new JScrollPane(userList), new JScrollPane(userTable));
+        splitPane.setResizeWeight(0.5); // Balance the split between JList and JTable
+        add(splitPane, BorderLayout.CENTER);
 
         // Buttons
         JPanel buttonPanel = new JPanel();
@@ -49,16 +67,53 @@ public class StaffManagementPanel extends JPanel {
         });
     }
 
+    private List<String> getSortedUsernames() {
+        List<String> usernames = new ArrayList<>(userService.getAllUsernames());
+
+        // Sort the usernames, but ensure "admin" is always at the top
+        usernames.remove("admin");
+        Collections.sort(usernames);
+        usernames.add(0, "admin");
+
+        return usernames;
+    }
+
     private void updateUserList() {
+        List<String> sortedUsernames = getSortedUsernames(); // Get the sorted usernames
+
         userModel.clear();
-        for (String username : userService.getAllUsernames()) {
+        for (String username : sortedUsernames) {
             userModel.addElement(username);
+        }
+    }
+
+    private void updateUserTable() {
+        List<String> sortedUsernames = getSortedUsernames(); // Get the sorted usernames
+
+        tableModel.setRowCount(0); // Clear the table before adding rows
+        for (String username : sortedUsernames) {
+            User user = userService.getUser(username); // Fetch user details directly
+            String role;
+
+            // Determine the role based on the user type
+            if (user instanceof Admin) {
+                role = "Admin";
+            } else if (user instanceof Manager) {
+                role = "Manager";
+            } else {
+                role = "Staff";
+            }
+
+            // Debugging output
+            System.out.println("User: " + username + " | Role: " + role + " | Instance: " + user.getClass().getSimpleName());
+
+            tableModel.addRow(new Object[]{username, role});
         }
     }
 
     private void handleAddUser() {
         JTextField usernameField = new JTextField();
-        JTextField passwordField = new JPasswordField();
+        JPasswordField passwordField = new JPasswordField();
         JComboBox<String> roleComboBox = new JComboBox<>(new String[]{"Manager", "Staff"});
 
         JPanel panel = new JPanel(new GridLayout(3, 2));
@@ -73,7 +128,7 @@ public class StaffManagementPanel extends JPanel {
 
         if (result == JOptionPane.OK_OPTION) {
             String username = usernameField.getText();
-            String password = passwordField.getText();
+            String password = new String(passwordField.getPassword());
             String role = (String) roleComboBox.getSelectedItem();
 
             if (username.isEmpty() || password.isEmpty() || role == null) {
@@ -82,7 +137,8 @@ public class StaffManagementPanel extends JPanel {
                 boolean addSuccess = userService.addUser(username, password, role, currentUser);
                 if (addSuccess) {
                     JOptionPane.showMessageDialog(this, "User added successfully.");
-                    updateUserList();
+                    updateUserList(); // Update JList
+                    updateUserTable(); // Update JTable
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to add user.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -91,17 +147,47 @@ public class StaffManagementPanel extends JPanel {
     }
 
     private void handleRemoveUser() {
-        String username = userList.getSelectedValue();
-        if (username == null) {
-            JOptionPane.showMessageDialog(this, "No user selected.");
-            return;
-        }
+        int selectedRow = userTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            String username = (String) tableModel.getValueAt(selectedRow, 0);
+            if ("admin".equalsIgnoreCase(username)) {
+                JOptionPane.showMessageDialog(this, "Admin cannot be removed.");
+                return;
+            }
 
-        if (userService.removeUser(username, currentUser)) {
-            JOptionPane.showMessageDialog(this, "User removed successfully.");
-            updateUserList();
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "Are you sure you want to remove the user: " + username + "?",
+                    "Confirm Removal", JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                boolean success = userService.removeUser(username, currentUser);
+                if (success) {
+                    JOptionPane.showMessageDialog(this, "User removed successfully.");
+                    updateUserList();  // Update JList
+                    updateUserTable(); // Update JTable
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to remove user.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         } else {
-            JOptionPane.showMessageDialog(this, "Failed to remove user.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select a user to remove.");
         }
     }
 }
+
+
+//    private void handleRemoveUser() {
+//        String username = userList.getSelectedValue();
+//        if (username == null) {
+//            JOptionPane.showMessageDialog(this, "No user selected.");
+//            return;
+//        }
+//
+//        if (userService.removeUser(username, currentUser)) {
+//            JOptionPane.showMessageDialog(this, "User removed successfully.");
+//            updateUserList();
+//        } else {
+//            JOptionPane.showMessageDialog(this, "Failed to remove user.", "Error", JOptionPane.ERROR_MESSAGE);
+//        }
+//    }
+//}
