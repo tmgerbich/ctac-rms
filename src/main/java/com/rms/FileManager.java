@@ -1,7 +1,9 @@
 package com.rms;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FileManager {
@@ -37,6 +39,24 @@ public class FileManager {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return new HashMap<>();
+        }
+    }
+
+    // New methods for saving and loading MenuItems
+    public static void saveMenuItems(List<MenuItem> menuItems, String fileName) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            oos.writeObject(menuItems);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<MenuItem> loadMenuItems(String fileName) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
+            return (List<MenuItem>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
     }
 }
