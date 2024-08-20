@@ -124,7 +124,13 @@ public class UserService {
         return users.keySet().stream().collect(Collectors.toList());
     }
 
+    // Get user by username
+    public User getUser(String username) {
+        return users.get(username);
+    }
 }
+
+
 
 
 
