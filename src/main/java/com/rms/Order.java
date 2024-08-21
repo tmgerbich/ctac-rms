@@ -51,6 +51,7 @@ public class Order implements Serializable {
         this.status = status;
     }
 
+    //does this take into account quantity??
     private void calculatePrice() {
         this.price = items.stream().mapToDouble(MenuItem::getPrice).sum();
     }

@@ -95,6 +95,7 @@ public class InventoryPanel extends JPanel {
         }
     }
 
+
     private void handleRemoveIngredient() {
         String ingredient = ingredientList.getSelectedValue();
         if (ingredient == null) {
@@ -104,7 +105,7 @@ public class InventoryPanel extends JPanel {
 
         int quantity = 1;
 
-        if (inventory.removeIngredient(ingredient, quantity)) {
+        if (inventory.subtractIngredient(ingredient, quantity)) {
             JOptionPane.showMessageDialog(this, "Ingredient removed successfully.");
             updateIngredientList();
         } else {

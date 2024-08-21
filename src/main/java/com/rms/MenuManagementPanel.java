@@ -77,7 +77,7 @@ public class MenuManagementPanel extends JPanel {
         panel.add(descriptionField);
         panel.add(new JLabel("Price:"));
         panel.add(priceField);
-        panel.add(new JLabel("Prep Time (in minutes):"));
+        panel.add(new JLabel("Prep Time (in seconds):"));
         panel.add(prepTimeField);
         panel.add(new JLabel("Ingredient 1:"));
         panel.add(ingredientsComboBox1);
@@ -102,7 +102,7 @@ public class MenuManagementPanel extends JPanel {
             String name = nameField.getText();
             String description = descriptionField.getText();
             double price = Double.parseDouble(priceField.getText());
-            Duration prepTime = Duration.ofMinutes(Long.parseLong(prepTimeField.getText()));
+            Duration prepTime = Duration.ofSeconds(Long.parseLong(prepTimeField.getText()));
 
             // Prepare the ingredients list
             List<Ingredient> ingredients = new ArrayList<>();

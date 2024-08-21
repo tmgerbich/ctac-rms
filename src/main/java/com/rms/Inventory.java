@@ -36,8 +36,8 @@ public class Inventory {
         return true;
     }
 
-    // Remove an ingredient from the inventory
-    public boolean removeIngredient(String name, int quantity) {
+
+    public boolean subtractIngredient(String name, int quantity) {
         if (ingredients.containsKey(name)) {
             Ingredient ingredient = ingredients.get(name);
             int currentQuantity = ingredient.getQuantity();

@@ -24,6 +24,8 @@ public class RestaurantManagementApp extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+
+        InventoryPanel inventoryPanel = new InventoryPanel();
         TablePanel tablePanel = new TablePanel(tableService, orderService, menu, inventory);
         TakeoutPanel takeoutPanel = new TakeoutPanel(orderService, menu, inventory);
         MenuManagementPanel menuPanel = new MenuManagementPanel(menu, inventory);
@@ -47,12 +49,13 @@ public class RestaurantManagementApp extends JFrame {
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Add the Staff Management panel
+        // Add the tabs
         tabbedPane.addTab("Staff Management", new StaffManagementPanel(currentUser));
-        tabbedPane.addTab("Inventory", new InventoryPanel());
+        tabbedPane.addTab("Menu Management", menuPanel);
+        tabbedPane.addTab("Inventory", inventoryPanel);
         tabbedPane.addTab("Table Orders", tablePanel);
         tabbedPane.addTab("Takeout Orders", takeoutPanel);
-        tabbedPane.addTab("Menu Management", menuPanel);
+
         tabbedPane.addTab("Order Management", orderPanel);
 
         // Add ChangeListener to the tabbed pane
@@ -61,12 +64,15 @@ public class RestaurantManagementApp extends JFrame {
             public void stateChanged(ChangeEvent e) {
                 int selectedIndex = tabbedPane.getSelectedIndex();
                 switch (selectedIndex) {
-                    case 2: // Table Orders tab
+                    case 1: // Menu Management Tab
                         tablePanel.refreshTables();
                         break;
-                    case 3: // Takeout Orders tab
+                    case 2: //Inventory Tab
                         break;
-                    case 4: // Menu Management tab
+                    case 3: // Table Orders tab
+                        tablePanel.refreshTables();
+                        break;
+                    case 4: // Takeout Orders tab
                         break;
                     case 5: // Order Management tab
                         orderPanel.updateOrderTable();
