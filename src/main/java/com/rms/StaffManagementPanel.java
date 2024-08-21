@@ -12,10 +12,8 @@ import java.util.List;
 public class StaffManagementPanel extends JPanel {
     private UserService userService;
     private User currentUser;
-    private DefaultListModel<String> userModel;
-    private JList<String> userList;
 
-    // Gabbi code for JTable
+    // JTable for structured display
     private DefaultTableModel tableModel;
     private JTable userTable;
 
@@ -25,22 +23,14 @@ public class StaffManagementPanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        // User list
-        userModel = new DefaultListModel<>();
-        userList = new JList<>(userModel);
-        updateUserList(); // This will now sync with JTable
-
-        // User table for structured display (new functionality)
+        // User table for structured display
         String[] columnNames = {"Username", "Role"};
         tableModel = new DefaultTableModel(columnNames, 0);
         userTable = new JTable(tableModel);
-        updateUserTable(); // This will now sync with JList
+        updateUserTable(); // Populate JTable
 
-        // Add both the JList and JTable to the panel
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                new JScrollPane(userList), new JScrollPane(userTable));
-        splitPane.setResizeWeight(0.5); // Balance the split between JList and JTable
-        add(splitPane, BorderLayout.CENTER);
+        // Add JTable to the panel
+        add(new JScrollPane(userTable), BorderLayout.CENTER);
 
         // Buttons
         JPanel buttonPanel = new JPanel();
@@ -78,15 +68,6 @@ public class StaffManagementPanel extends JPanel {
         return usernames;
     }
 
-    private void updateUserList() {
-        List<String> sortedUsernames = getSortedUsernames(); // Get the sorted usernames
-
-        userModel.clear();
-        for (String username : sortedUsernames) {
-            userModel.addElement(username);
-        }
-    }
-
     private void updateUserTable() {
         List<String> sortedUsernames = getSortedUsernames(); // Get the sorted usernames
 
@@ -104,9 +85,7 @@ public class StaffManagementPanel extends JPanel {
                 role = "Staff";
             }
 
-            // Debugging output
-            System.out.println("User: " + username + " | Role: " + role + " | Instance: " + user.getClass().getSimpleName());
-
+            // Add row to the table
             tableModel.addRow(new Object[]{username, role});
         }
     }
@@ -137,7 +116,6 @@ public class StaffManagementPanel extends JPanel {
                 boolean addSuccess = userService.addUser(username, password, role, currentUser);
                 if (addSuccess) {
                     JOptionPane.showMessageDialog(this, "User added successfully.");
-                    updateUserList(); // Update JList
                     updateUserTable(); // Update JTable
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to add user.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -163,7 +141,6 @@ public class StaffManagementPanel extends JPanel {
                 boolean success = userService.removeUser(username, currentUser);
                 if (success) {
                     JOptionPane.showMessageDialog(this, "User removed successfully.");
-                    updateUserList();  // Update JList
                     updateUserTable(); // Update JTable
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to remove user.", "Error", JOptionPane.ERROR_MESSAGE);
