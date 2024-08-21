@@ -1,4 +1,4 @@
-package com.rms;
+package com.rms.util;
 
 public enum Emoji {
     // Fruits

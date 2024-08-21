@@ -1,5 +1,8 @@
 package com.rms;
 
+import com.rms.model.User;
+import com.rms.service.UserService;
+
 import java.util.Scanner;
 
 public class main {

@@ -1,4 +1,4 @@
-package com.rms;
+package com.rms.enums;
 
 public enum TableStatus {
     AVAILABLE,

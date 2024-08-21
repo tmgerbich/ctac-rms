@@ -1,4 +1,9 @@
-package com.rms;
+package com.rms.gui;
+
+import com.rms.model.Ingredient;
+import com.rms.service.Inventory;
+import com.rms.model.MenuItem;
+import com.rms.service.Menu;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,5 +1,7 @@
 package com.rms;
 
+import com.rms.model.Ingredient;
+import com.rms.service.Inventory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,11 +1,14 @@
-package com.rms;
+package com.rms.gui;
+
+import com.rms.service.Inventory;
+import com.rms.model.MenuItem;
+import com.rms.model.Order;
+import com.rms.service.OrderService;
+import com.rms.service.Menu;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 

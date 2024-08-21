@@ -1,4 +1,14 @@
-package com.rms;
+package com.rms.gui;
+
+import com.rms.model.MenuItem;
+import com.rms.enums.OrderStatus;
+import com.rms.enums.TableStatus;
+import com.rms.model.Order;
+import com.rms.model.Table;
+import com.rms.service.Inventory;
+import com.rms.service.Menu;
+import com.rms.service.OrderService;
+import com.rms.service.TableService;
 
 import javax.swing.*;
 import java.awt.*;

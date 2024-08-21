@@ -1,4 +1,4 @@
-package com.rms;
+package com.rms.model;
 
 import java.io.Serializable;
 

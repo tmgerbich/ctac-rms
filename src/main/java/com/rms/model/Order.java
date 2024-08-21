@@ -1,4 +1,6 @@
-package com.rms;
+package com.rms.model;
+
+import com.rms.enums.OrderStatus;
 
 import java.io.Serializable;
 import java.time.Duration;

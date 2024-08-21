@@ -1,14 +1,16 @@
-package com.rms;
+package com.rms.service;
 
+import com.rms.model.Admin;
+import com.rms.model.Manager;
+import com.rms.model.Staff;
+import com.rms.model.User;
+import com.rms.util.FileManager;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class UserService {

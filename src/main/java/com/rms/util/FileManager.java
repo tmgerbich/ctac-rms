@@ -1,4 +1,6 @@
-package com.rms;
+package com.rms.util;
+
+import com.rms.model.*;
 
 import java.io.*;
 import java.util.HashMap;

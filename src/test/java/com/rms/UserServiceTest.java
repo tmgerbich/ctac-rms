@@ -1,5 +1,10 @@
 package com.rms;
 
+import com.rms.model.Admin;
+import com.rms.model.Manager;
+import com.rms.model.Staff;
+import com.rms.model.User;
+import com.rms.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

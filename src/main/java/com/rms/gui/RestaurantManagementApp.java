@@ -1,4 +1,10 @@
-package com.rms;
+package com.rms.gui;
+
+import com.rms.model.User;
+import com.rms.service.Inventory;
+import com.rms.service.Menu;
+import com.rms.service.OrderService;
+import com.rms.service.TableService;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;

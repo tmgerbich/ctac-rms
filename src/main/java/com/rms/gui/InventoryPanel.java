@@ -1,4 +1,7 @@
-package com.rms;
+package com.rms.gui;
+
+import com.rms.model.Ingredient;
+import com.rms.service.Inventory;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

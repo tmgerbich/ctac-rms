@@ -1,4 +1,8 @@
-package com.rms;
+package com.rms.service;
+
+import com.rms.gui.TableSetup;
+import com.rms.model.Table;
+import com.rms.util.FileManager;
 
 import java.io.File;
 import java.util.HashMap;

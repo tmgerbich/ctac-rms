@@ -1,4 +1,7 @@
-package com.rms;
+package com.rms.model;
+
+import com.rms.enums.TableStatus;
+import com.rms.gui.TableSetup;
 
 import java.io.Serializable;
 

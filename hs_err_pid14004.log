@@ -27,7 +27,7 @@
 
 ---------------  S U M M A R Y ------------
 
-Command Line: -javaagent:C:\Program Files\JetBrains\IntelliJ IDEA 2024.1.4\lib\idea_rt.jar=52309:C:\Program Files\JetBrains\IntelliJ IDEA 2024.1.4\bin -Dfile.encoding=UTF-8 com.rms.LoginFrame
+Command Line: -javaagent:C:\Program Files\JetBrains\IntelliJ IDEA 2024.1.4\lib\idea_rt.jar=52309:C:\Program Files\JetBrains\IntelliJ IDEA 2024.1.4\bin -Dfile.encoding=UTF-8 com.rms.gui.LoginFrame
 
 Host: Intel(R) Core(TM) i5-8350U CPU @ 1.70GHz, 8 cores, 15G,  Windows 11 , 64 bit Build 22621 (10.0.22621.3672)
 Time: Tue Aug 20 07:37:39 2024 Eastern Daylight Time elapsed time: 0.188592 seconds (0d 0h 0m 0s)
@@ -501,7 +501,7 @@ symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Pr
 
 VM Arguments:
 jvm_args: -javaagent:C:\Program Files\JetBrains\IntelliJ IDEA 2024.1.4\lib\idea_rt.jar=52309:C:\Program Files\JetBrains\IntelliJ IDEA 2024.1.4\bin -Dfile.encoding=UTF-8 
-java_command: com.rms.LoginFrame
+java_command: com.rms.gui.LoginFrame
 java_class_path (initial): C:\Users\admin\CTAC_Program\Full_Stack_103\RMS-test\target\classes;C:\Users\admin\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar
 Launcher Type: SUN_STANDARD
 

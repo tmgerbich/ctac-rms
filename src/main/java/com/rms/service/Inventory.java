@@ -1,4 +1,7 @@
-package com.rms;
+package com.rms.service;
+
+import com.rms.model.Ingredient;
+import com.rms.util.FileManager;
 
 import java.io.File;
 import java.io.Serializable;

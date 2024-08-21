@@ -1,4 +1,4 @@
-package com.rms;
+package com.rms.model;
 
 public class Staff extends User {
 

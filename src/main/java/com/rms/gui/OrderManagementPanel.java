@@ -1,10 +1,12 @@
-package com.rms;
+package com.rms.gui;
+
+import com.rms.service.Inventory;
+import com.rms.service.Menu;
+import com.rms.model.Order;
+import com.rms.service.OrderService;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
 public class OrderManagementPanel extends JPanel {

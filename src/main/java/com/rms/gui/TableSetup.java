@@ -1,4 +1,4 @@
-package com.rms;
+package com.rms.gui;
 
 public enum TableSetup {
     TABLE_ONE("1", 4),

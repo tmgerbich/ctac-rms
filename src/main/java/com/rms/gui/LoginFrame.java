@@ -1,4 +1,7 @@
-package com.rms;
+package com.rms.gui;
+
+import com.rms.model.User;
+import com.rms.service.UserService;
 
 import javax.swing.*;
 import java.awt.*;
