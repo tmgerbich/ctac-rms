@@ -65,7 +65,7 @@ public class TablePanel extends JPanel {
     }
 
     public void refreshTables() {
-        SwingUtilities.invokeLater(() -> {
+
             for (Map.Entry<Table, JButton> entry : tableButtonMap.entrySet()) {
                 Table table = entry.getKey();
                 JButton tableButton = entry.getValue();
@@ -77,7 +77,7 @@ public class TablePanel extends JPanel {
                     updateTableButton(table, tableButton);
                 }
             }
-        });
+
     }
 
     private void handleTableClick(Table table, JButton tableButton) {

@@ -73,6 +73,7 @@ public class RestaurantManagementApp extends JFrame {
                         tablePanel.refreshTables();
                         break;
                     case 4: // Takeout Orders tab
+                        takeoutPanel.updateTakeoutOrderTable();
                         break;
                     case 5: // Order Management tab
                         orderPanel.updateOrderTable();

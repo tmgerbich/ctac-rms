@@ -1,6 +1,7 @@
 package com.rms;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +13,8 @@ public class TakeoutPanel extends JPanel {
     private OrderService orderService;
     private Menu menu;
     private Inventory inventory;
+    private DefaultTableModel tableModel;
+    private JTable takeoutOrderTable;
 
     public TakeoutPanel(OrderService orderService, Menu menu, Inventory inventory) {
         this.orderService = orderService;
@@ -19,15 +22,39 @@ public class TakeoutPanel extends JPanel {
         this.inventory = inventory;
         setLayout(new BorderLayout());
 
-        JButton addOrderButton = new JButton("Add Takeout Order");
-        addOrderButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleAddTakeoutOrder();
-            }
-        });
 
-        add(addOrderButton, BorderLayout.NORTH);
+        // Table setup
+        String[] columnNames = {"Order ID", "Customer", "Status"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        takeoutOrderTable = new JTable(tableModel);
+        updateTakeoutOrderTable();
+
+        add(new JScrollPane(takeoutOrderTable), BorderLayout.CENTER);
+
+        JButton addOrderButton = new JButton("Add Takeout Order");
+        addOrderButton.addActionListener(e -> handleAddTakeoutOrder());
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(addOrderButton);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        // Set up a timer to refresh the table periodically
+        Timer refreshTimer = new Timer(1000, e -> updateTakeoutOrderTable());
+        refreshTimer.start();
+
+    }
+
+    public void updateTakeoutOrderTable() {
+        tableModel.setRowCount(0); // Clear the table before adding rows
+        for (Order order : orderService.getActiveOrders()) {
+            if (order.isTakeOut()) {
+                tableModel.addRow(new Object[]{
+                        order.getOrderID(),
+                        order.getName(),
+                        order.getStatus()
+                });
+            }
+        }
     }
 
     private void handleAddTakeoutOrder() {

@@ -41,6 +41,10 @@ public class Order implements Serializable {
         this.orderID = orderID;
     }
 
+    public boolean isTakeOut() {
+        return takeOut;
+    }
+
     public double getPrice() {
         return price;
     }
