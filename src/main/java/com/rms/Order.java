@@ -8,15 +8,17 @@ public class Order implements Serializable {
     private int orderID;
     private boolean takeOut;
     private Table table;
+    private String name;
     private ArrayList<MenuItem> items;
     private double price;
     private OrderStatus status;
     private Duration prepTime;
 
-    public Order(boolean takeOut, ArrayList<MenuItem> items) {
+    public Order(boolean takeOut, String name, ArrayList<MenuItem> items) {
         this.takeOut = takeOut;
         this.items = items;
         this.table = null;
+        this.name = name;
         calculatePrice();
         calculatePrepTime();
         this.status = OrderStatus.WAITING;
@@ -68,5 +70,13 @@ public class Order implements Serializable {
 
     public Table getTable() {
         return table;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

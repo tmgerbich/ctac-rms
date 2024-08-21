@@ -35,7 +35,7 @@ public class OrderManagementPanel extends JPanel {
         for (Order order : orderService.getActiveOrders()) {
             tableModel.addRow(new Object[]{
                     order.getOrderID(),
-                    order.getTable() != null ? order.getTable().getTableName().toString() : "Takeout",
+                    order.getTable() != null ? "Table " + order.getTable().getTableName().toString() : "Takeout - " + order.getName(),
                     order.getStatus()
             });
         }
