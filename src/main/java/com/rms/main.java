@@ -40,14 +40,22 @@ public class main {
 
             switch (choice) {
                 case 1:
+                    System.out.print("Enter new staff ID: ");
+                    String staffID = scanner.nextLine();
                     System.out.print("Enter new username: ");
                     String newUsername = scanner.nextLine();
                     System.out.print("Enter new password: ");
                     String newPassword = scanner.nextLine();
                     System.out.print("Enter role (Manager, Staff): ");
                     String role = scanner.nextLine();
+                    double hoursWorked = 0;
+                    if (role.equalsIgnoreCase("Staff")) {
+                        System.out.print("Enter hours worked: ");
+                        hoursWorked = scanner.nextDouble();
+                        scanner.nextLine(); // Consume newline
+                    }
 
-                    boolean addSuccess = userService.addUser(newUsername, newPassword, role, currentUser);
+                    boolean addSuccess = userService.addUser(staffID, newUsername, newPassword, role, hoursWorked, currentUser);
                     if (addSuccess) {
                         System.out.println("User added successfully.");
                     } else {

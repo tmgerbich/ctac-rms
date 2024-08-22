@@ -21,14 +21,12 @@ public class UserService {
     public UserService() {
         users = new HashMap<>();
         File file = new File("users.dat");
-        // Check if the file exists
         if (file.exists()) {
             loadUsers(); // Load users from the file if it exists
         }
         initializeAdmin(); // Ensure the admin user is created
     }
 
-    //create the admin if one does not exist
     private void initializeAdmin() {
         if (!users.containsKey(ADMIN_USERNAME)) {
             String password = ADMIN_PASSWORD;
@@ -38,7 +36,7 @@ public class UserService {
         }
     }
 
-    public boolean addUser(String username, String password, String role, User currentUser) {
+    public boolean addUser(String staffID, String username, String password, String role, double hoursWorked, User currentUser) {
         if (users.containsKey(username)) return false;
 
         User newUser;
@@ -50,14 +48,14 @@ public class UserService {
                     System.out.println("Only an admin can add a manager.");
                     return false;
                 }
-                newUser = new Manager(username, hashedPassword);
+                newUser = new Manager(username, hashedPassword, staffID, hoursWorked);
                 break;
             case "STAFF":
                 if (!currentUser.canAddStaff()) {
                     System.out.println("Only an admin or a manager can add staff.");
                     return false;
                 }
-                newUser = new Staff(username, hashedPassword);
+                newUser = new Staff(username, hashedPassword, staffID, hoursWorked);
                 break;
             default:
                 System.out.println("Invalid role. Please specify 'Manager' or 'Staff'.");
@@ -73,7 +71,7 @@ public class UserService {
         if (!users.containsKey(username)) return false;
         User userToRemove = users.get(username);
 
-        switch(userToRemove.getClass().getSimpleName().toUpperCase()) {
+        switch (userToRemove.getClass().getSimpleName().toUpperCase()) {
             case "MANAGER":
                 if (!currentUser.canAddManager()) {
                     System.out.println("Only an admin can remove a manager.");
@@ -95,8 +93,6 @@ public class UserService {
         saveUsers(); // Save to file after removing the user
         return true;
     }
-
-
 
     public User authenticate(String username, String password) {
         User user = users.get(username);
@@ -126,7 +122,6 @@ public class UserService {
         return users.keySet().stream().collect(Collectors.toList());
     }
 
-    // Get user by username
     public User getUser(String username) {
         return users.get(username);
     }

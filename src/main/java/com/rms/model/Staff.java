@@ -2,8 +2,21 @@ package com.rms.model;
 
 public class Staff extends User {
 
-    public Staff(String username, String hashedPassword) {
+    private String staffID;
+    private double hoursWorked;
+
+    public Staff(String username, String hashedPassword, String staffID, double hoursWorked) {
         super(username, hashedPassword);
+        this.staffID = staffID;
+        this.hoursWorked = hoursWorked;
+    }
+
+    public String getStaffID() {
+        return staffID;
+    }
+
+    public double getHoursWorked() {
+        return hoursWorked;
     }
 
     @Override
