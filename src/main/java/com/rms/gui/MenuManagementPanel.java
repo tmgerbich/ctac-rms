@@ -173,8 +173,6 @@ public class MenuManagementPanel extends JPanel {
             JTextField quantityField3 = new JTextField();
             JComboBox<String> ingredientsComboBox4 = new JComboBox<>(inventory.getAllIngredients().toArray(new String[0]));
             JTextField quantityField4 = new JTextField();
-            JComboBox<String> ingredientsComboBox5 = new JComboBox<>(inventory.getAllIngredients().toArray(new String[0]));
-            JTextField quantityField5 = new JTextField();
 
             // Prefill ingredients and quantities if available
             if (currentItem.getIngredients().size() > 0) {
@@ -194,10 +192,6 @@ public class MenuManagementPanel extends JPanel {
                 quantityField4.setText(String.valueOf(currentItem.getIngredients().get(3).getQuantity()));
             }
 
-            if (currentItem.getIngredients().size() > 4) {
-                ingredientsComboBox4.setSelectedItem(currentItem.getIngredients().get(4).getName());
-                quantityField4.setText(String.valueOf(currentItem.getIngredients().get(4).getQuantity()));
-            }
 
             JPanel panel = new JPanel(new GridLayout(12, 4));
             panel.add(new JLabel("Name:"));
@@ -224,10 +218,6 @@ public class MenuManagementPanel extends JPanel {
             panel.add(ingredientsComboBox4);
             panel.add(new JLabel("Quantity 4:"));
             panel.add(quantityField4);
-            panel.add(new JLabel("Ingredient 5:"));
-            panel.add(ingredientsComboBox4);
-            panel.add(new JLabel("Quantity 5:"));
-            panel.add(quantityField4);
 
 
             int result = JOptionPane.showConfirmDialog(null, panel, "Edit Menu Item", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -244,7 +234,6 @@ public class MenuManagementPanel extends JPanel {
                 addIngredientToList(ingredients, ingredientsComboBox2, quantityField2);
                 addIngredientToList(ingredients, ingredientsComboBox3, quantityField3);
                 addIngredientToList(ingredients, ingredientsComboBox4, quantityField4);
-                addIngredientToList(ingredients, ingredientsComboBox5, quantityField5);
 
 
                 MenuItem updatedItem = new MenuItem(name, description, prepTime, price, new ArrayList<>(ingredients));
