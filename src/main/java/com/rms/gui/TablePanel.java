@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TablePanel extends JPanel {
     private TableService tableService;
@@ -147,6 +148,7 @@ public class TablePanel extends JPanel {
 
     private void takeOrder(Table table, JButton tableButton) {
         List<MenuItem> items = new ArrayList<>();
+        AtomicBoolean shouldExit = new AtomicBoolean(false);
 
         while (true) {
             JComboBox<String> itemComboBox = new JComboBox<>(menu.getAllMenuItems().toArray(new String[0]));
@@ -173,8 +175,14 @@ public class TablePanel extends JPanel {
                     final int index = i;  // Use final or effectively final variable for lambda
                     removeButton.addActionListener(e -> {
                         items.remove(index);
+                        // Close the current dialog
+                        Window window = SwingUtilities.getWindowAncestor(panel);
+                        if (window instanceof JDialog) {
+                            ((JDialog) window).dispose();
+                        }
                         // Refresh the dialog by re-calling takeOrder with items as a parameter using overloaded
                         takeOrder(table, tableButton, items);
+                        shouldExit.set(true);
                     });
                     panel.add(removeButton);
                 }
@@ -218,7 +226,7 @@ public class TablePanel extends JPanel {
             }
         }
 
-        if (!items.isEmpty()) {
+        if (!items.isEmpty() && !shouldExit.get()) {
             // Create and process the order
             Order order = new Order(table, new ArrayList<>(items));
             orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
@@ -231,6 +239,7 @@ public class TablePanel extends JPanel {
 
     //overloaded constructor to keep order when removing and recalling function
     private void takeOrder(Table table, JButton tableButton, List<MenuItem> items) {
+        AtomicBoolean shouldExit = new AtomicBoolean(false);
 
         while (true) {
             JComboBox<String> itemComboBox = new JComboBox<>(menu.getAllMenuItems().toArray(new String[0]));
@@ -257,8 +266,14 @@ public class TablePanel extends JPanel {
                     final int index = i;  // Use final or effectively final variable for lambda
                     removeButton.addActionListener(e -> {
                         items.remove(index);
+                        // Close the current dialog
+                        Window window = SwingUtilities.getWindowAncestor(panel);
+                        if (window instanceof JDialog) {
+                            ((JDialog) window).dispose();
+                        }
                         // Refresh the dialog by re-calling takeOrder using this overloaded constructor to maintain current order
                         takeOrder(table, tableButton, items);
+                        shouldExit.set(true);
                     });
                     panel.add(removeButton);
                 }
@@ -302,7 +317,7 @@ public class TablePanel extends JPanel {
             }
         }
 
-        if (!items.isEmpty()) {
+        if (!items.isEmpty() && !shouldExit.get()) {
             // Create and process the order
             Order order = new Order(table, new ArrayList<>(items));
             orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor

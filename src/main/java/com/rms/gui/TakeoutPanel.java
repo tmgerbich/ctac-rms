@@ -67,6 +67,7 @@ public class TakeoutPanel extends JPanel {
 
         //boolean flag to keep track of if the instance of running this method is the one that should add to order at the end or if the order was added in a different recursive method call
         AtomicBoolean shouldExit = new AtomicBoolean(false);
+
         JTextField nameField = new JTextField();
         JPanel namePanel = new JPanel(new GridLayout(1,1));
         namePanel.add(nameField);
