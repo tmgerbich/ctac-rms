@@ -69,9 +69,28 @@ public class MenuItem implements Serializable {
                 name, price, description, formatDuration(prepTime), ingredients);
     }
 
+//    private String formatDuration(Duration duration) {
+//        long minutes = duration.toMinutes();
+//        long seconds = duration.minusMinutes(minutes).getSeconds();
+//        return String.format("%d min, %d sec", minutes, seconds);
+
+    // Format the duration for display
     private String formatDuration(Duration duration) {
-        long minutes = duration.toMinutes();
-        long seconds = duration.minusMinutes(minutes).getSeconds();
-        return String.format("%d min, %d sec", minutes, seconds);
+        long seconds = duration.getSeconds();
+        return String.format("%d sec", seconds);
+    }
+
+    // Format the ingredients for display
+    private String formatIngredients() {
+        StringBuilder ingredientsList = new StringBuilder();
+        for (Ingredient ingredient : ingredients) {
+            if (ingredient.getQuantity() > 0) {
+                ingredientsList.append(ingredient.getName()).append(" (").append(ingredient.getQuantity()).append("), ");
+            }
+        }
+        if (ingredientsList.length() > 0) {
+            ingredientsList.setLength(ingredientsList.length() - 2);  // Remove trailing comma and space
+        }
+        return ingredientsList.toString();
     }
 }
