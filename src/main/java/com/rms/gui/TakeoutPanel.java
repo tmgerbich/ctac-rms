@@ -64,6 +64,8 @@ public class TakeoutPanel extends JPanel {
     private void handleAddTakeoutOrder() {
         List<MenuItem> items = new ArrayList<>();
         String name;
+
+        //boolean flag to keep track of if the instance of running this method is the one that should add to order at the end or if the order was added in a different recursive method call
         AtomicBoolean shouldExit = new AtomicBoolean(false);
         JTextField nameField = new JTextField();
         JPanel namePanel = new JPanel(new GridLayout(1,1));
@@ -119,10 +121,6 @@ public class TakeoutPanel extends JPanel {
                     }
                 }
 
-                // Return from the method if the flag is set
-                if (shouldExit.get()) {
-                    return;
-                }
 
                 // Define the options for the custom dialog
                 Object[] options = new Object[]{"Add", "Finish"};
@@ -161,7 +159,7 @@ public class TakeoutPanel extends JPanel {
                 }
             }
 
-            if (!items.isEmpty() && !shouldExit.get()) {
+            if (!items.isEmpty() && !shouldExit.get()) { //this checks the boolean to see if this is the final order submission or a leftover thing still needing to finish out since return wasn't working and if so does not add the order
                 // Create and process the order
                 Order order = new Order(true, name, new ArrayList<>(items));
                 orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
@@ -173,6 +171,7 @@ public class TakeoutPanel extends JPanel {
 
     //overloaded constructor to keep order when removing and recalling function
     private void handleAddTakeoutOrder(String name, List<MenuItem> items) {
+        //boolean flag to keep track of if the instance of running this method is the one that should add to order at the end or if the order was added in a different recursive method call
         AtomicBoolean shouldExit = new AtomicBoolean(false);
 
         while (true) {
@@ -214,10 +213,6 @@ public class TakeoutPanel extends JPanel {
                 }
             }
 
-            // Return from the method if the flag is set
-            if (shouldExit.get()) {
-                return;
-            }
 
             // Define the options for the custom dialog
             Object[] options = new Object[]{"Add", "Finish"};
@@ -256,7 +251,7 @@ public class TakeoutPanel extends JPanel {
             }
         }
 
-        if (!items.isEmpty() && !shouldExit.get()) {
+        if (!items.isEmpty() && !shouldExit.get()) { //this checks the boolean to see if this is the final order submission or a leftover thing still needing to finish out since return wasn't working and if so does not add the order
             // Create and process the order
             Order order = new Order(true, name, new ArrayList<>(items));
             orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
