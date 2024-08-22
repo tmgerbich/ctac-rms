@@ -76,19 +76,27 @@ public class TablePanel extends JPanel {
     }
 
     public void refreshTables() {
-
         for (Map.Entry<Table, JButton> entry : tableButtonMap.entrySet()) {
             Table table = entry.getKey();
             JButton tableButton = entry.getValue();
-            Order order = orderService.getOrderForTable(table);
 
-            if (order != null && order.getStatus() == OrderStatus.COMPLETED) {
-                System.out.println("Order " + order.getOrderID() + " status: " + order.getStatus());
-                table.setTableStatus(TableStatus.SERVED);
-                updateTableButton(table, tableButton);
+            try {
+                Order order = orderService.getOrderForTable(table);
+
+                if (order != null && order.getStatus() == OrderStatus.COMPLETED) {
+                    System.out.println("Order " + order.getOrderID() + " status: " + order.getStatus());
+                    table.setTableStatus(TableStatus.SERVED);
+                    updateTableButton(table, tableButton);
+                } else if (order == null) {
+                    System.out.println("No order found for table " + table.getTableName());
+                    // Handle the case where no order is found for the table, if needed
+                }
+            } catch (Exception e) {
+                System.err.println("Error refreshing table " + table.getTableName() + ": " + e.getMessage());
+                // Optionally log the stack trace for deeper debugging
+                e.printStackTrace();
             }
         }
-
     }
 
     private void handleTableClick(Table table, JButton tableButton) {

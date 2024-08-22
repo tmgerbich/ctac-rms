@@ -64,8 +64,17 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    public List<Order> getActiveTableOrders() {
+        return orders.values().stream()
+                .filter(order -> order.getStatus() != OrderStatus.CLEARED)
+                .filter(order -> !order.isTakeOut())
+                .collect(Collectors.toList());
+    }
+
+
+
     public Order getOrderForTable(Table table) {
-        List<Order> activeOrders = getActiveOrders();
+        List<Order> activeOrders = getActiveTableOrders();
         for (Order order : activeOrders) {
             if (order.getTable().equals(table)) {
                 return order;
