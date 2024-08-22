@@ -85,4 +85,8 @@ public class Order implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+    public ArrayList<MenuItem> getItems() {
+        return items;
+    }
 }

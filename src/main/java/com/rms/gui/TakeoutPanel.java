@@ -1,5 +1,6 @@
 package com.rms.gui;
 
+import com.rms.enums.OrderStatus;
 import com.rms.service.Inventory;
 import com.rms.model.MenuItem;
 import com.rms.model.Order;
@@ -10,7 +11,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TakeoutPanel extends JPanel {
@@ -37,13 +40,19 @@ public class TakeoutPanel extends JPanel {
 
         JButton addOrderButton = new JButton("Add Takeout Order");
         addOrderButton.addActionListener(e -> handleAddTakeoutOrder());
+        JButton clearOrderButton = new JButton("Clear Takeout Order");
+        clearOrderButton.addActionListener(e -> clearTakeoutOrder());
+        JButton showOrderButton = new JButton("Show Order Details");
+        showOrderButton.addActionListener(e -> showTakeoutOrder());
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addOrderButton);
+        buttonPanel.add(clearOrderButton);
+        buttonPanel.add(showOrderButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
         // Set up a timer to refresh the table periodically
-        Timer refreshTimer = new Timer(1000, e -> updateTakeoutOrderTable());
+        Timer refreshTimer = new Timer(5000, e -> updateTakeoutOrderTable());
         refreshTimer.start();
 
     }
@@ -166,7 +175,7 @@ public class TakeoutPanel extends JPanel {
                 orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
                 JOptionPane.showMessageDialog(this, "Order placed successfully");
             }
-            //if eventually going to add visual for the order in this tab it will get refreshed here
+            updateTakeoutOrderTable();
         }
     }
 
@@ -259,6 +268,67 @@ public class TakeoutPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Order placed successfully");
         }
 
-        //same deal if need to update display later it goes here
+        updateTakeoutOrderTable();
     }
+
+    private void clearTakeoutOrder() {
+        int selectedRow = takeoutOrderTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            int selectedOrder = (int) tableModel.getValueAt(selectedRow, 0);
+            orderService.updateOrderStatus(selectedOrder, OrderStatus.CLEARED);
+            updateTakeoutOrderTable(); // Refresh the table to reflect the cleared status
+        } else {
+            JOptionPane.showMessageDialog(this, "No order selected.", "Error", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void showTakeoutOrder() {
+        int selectedRow = takeoutOrderTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            int selectedOrder = (int) tableModel.getValueAt(selectedRow, 0);
+            Order selectedOrderFull = orderService.getOrder(selectedOrder);
+
+            // Create the panel for displaying the order details
+            JPanel panel = new JPanel(new GridLayout(0, 2)); // Use 0 rows to allow dynamic growth
+            panel.add(new JLabel("Order Details"));
+            panel.add(new JLabel(""));
+            panel.add(new JLabel("Customer Name: "));
+            panel.add(new JLabel(selectedOrderFull.getName()));
+
+            // Calculate quantities for each unique item
+            List<MenuItem> items = selectedOrderFull.getItems();
+            Map<MenuItem, Integer> itemQuantityMap = new HashMap<>();
+
+            for (MenuItem item : items) {
+                itemQuantityMap.put(item, itemQuantityMap.getOrDefault(item, 0) + 1);
+            }
+
+            // Add each item with its quantity to the panel
+            panel.add(new JLabel("Items: "));
+            panel.add(new JLabel("")); // Empty label for spacing
+
+            for (Map.Entry<MenuItem, Integer> entry : itemQuantityMap.entrySet()) {
+                MenuItem item = entry.getKey();
+                int quantity = entry.getValue();
+                panel.add(new JLabel(item.getName()));
+                panel.add(new JLabel("Quantity: " + quantity));
+            }
+
+
+            panel.add(new JLabel("Price: "));
+            panel.add(new JLabel("$" + String.format("%.2f", selectedOrderFull.getPrice())));
+            panel.add(new JLabel("Status: "));
+            panel.add(new JLabel(String.valueOf(selectedOrderFull.getStatus())));
+
+
+
+            JOptionPane.showMessageDialog(this, panel, "Takeout Order Details", JOptionPane.PLAIN_MESSAGE);
+
+            updateTakeoutOrderTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "No order selected.", "Error", JOptionPane.WARNING_MESSAGE);
+        }
+        updateTakeoutOrderTable();
+    }
+
 }

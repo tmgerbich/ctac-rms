@@ -44,7 +44,7 @@ public class OrderService {
         }
     }
 
-    // Get a menu item by ID
+    // Get an order by ID
     public Order getOrder(int orderId) {
         for (Map.Entry<Integer, Order> entry : orders.entrySet()) {
             if (entry.getKey().equals(orderId)) {
