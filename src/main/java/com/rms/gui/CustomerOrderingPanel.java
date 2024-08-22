@@ -1,0 +1,249 @@
+package com.rms.gui;
+
+import com.rms.enums.OrderStatus;
+import com.rms.model.MenuItem;
+import com.rms.model.Order;
+import com.rms.service.Inventory;
+import com.rms.service.Menu;
+import com.rms.service.OrderService;
+import com.rms.model.User;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public class CustomerOrderingPanel extends JPanel {
+    private OrderService orderService;
+    private Menu menu;
+    private Inventory inventory;
+    private User currentUser;
+    private ArrayList<MenuItem> itemsInOrder;
+    private JLabel messageLabel;
+    private Order currentOrder;
+
+    public CustomerOrderingPanel(Menu menu, Inventory inventory, OrderService orderService, User currentUser) {
+        this.menu = menu;
+        this.inventory = inventory;
+        this.orderService = orderService;
+        this.currentUser = currentUser;
+        this.itemsInOrder = new ArrayList<>();
+        this.currentOrder = null;
+
+        setLayout(new BorderLayout());
+
+        // Welcome message
+        messageLabel = new JLabel("Welcome to Nerd-Nook!", SwingConstants.CENTER);
+        messageLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        add(messageLabel, BorderLayout.CENTER);
+
+        JButton addOrderButton = new JButton("Create Order");
+        addOrderButton.addActionListener(e -> handleAddOrder());
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(addOrderButton);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        // Set up a timer to refresh the order status periodically
+        Timer refreshTimer = new Timer(5000, e -> refreshOrderStatus());
+        refreshTimer.start();
+    }
+
+    private void handleAddOrder() {
+        List<MenuItem> items = new ArrayList<>();
+        String name;
+
+        AtomicBoolean shouldExit = new AtomicBoolean(false);
+
+        JTextField nameField = new JTextField();
+        JPanel namePanel = new JPanel(new GridLayout(1, 1));
+        namePanel.add(nameField);
+        int nameResult = JOptionPane.showConfirmDialog(null, namePanel, "Name For The Order:", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (nameResult == JOptionPane.OK_OPTION) {
+            name = nameField.getText();
+        } else {
+            name = "";
+            JOptionPane.showMessageDialog(this, "Ordering Canceled.");
+        }
+
+        if (!name.isEmpty()) {
+            while (true) {
+                JComboBox<String> itemComboBox = new JComboBox<>(menu.getAllMenuItems().toArray(new String[0]));
+                JTextField quantityField = new JTextField();
+
+                int rowNumber = items.size() + 4;
+                JPanel panel = new JPanel(new GridLayout(rowNumber, 2));
+                panel.add(new JLabel("Item Name:"));
+                panel.add(itemComboBox);
+                panel.add(new JLabel("Quantity:"));
+                panel.add(quantityField);
+
+                if (!items.isEmpty()) {
+                    panel.add(new JLabel(""));
+                    panel.add(new JLabel("Current Order"));
+                    for (int i = 0; i < items.size(); i++) {
+                        MenuItem item = items.get(i);
+                        panel.add(new JLabel(item.getName()));
+
+                        JButton removeButton = new JButton("Remove");
+                        final int index = i;
+                        removeButton.addActionListener(e -> {
+                            items.remove(index);
+                            Window window = SwingUtilities.getWindowAncestor(panel);
+                            if (window instanceof JDialog) {
+                                ((JDialog) window).dispose();
+                            }
+                            handleAddOrder(name, items);
+                            shouldExit.set(true);
+                        });
+                        panel.add(removeButton);
+                    }
+                }
+
+                Object[] options = new Object[]{"Add", "Finish"};
+
+                int result = JOptionPane.showOptionDialog(
+                        null,
+                        panel,
+                        "Add Item to Order",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        options,
+                        options[0]
+                );
+                if (result == JOptionPane.CLOSED_OPTION) {
+                    return; // Stop processing if user closes the dialog
+                } else if (result == 0) {
+                    try {
+                        String itemName = (String) itemComboBox.getSelectedItem();
+                        int quantity = Integer.parseInt(quantityField.getText());
+
+                        if (!itemName.isEmpty() && quantity > 0) {
+                            MenuItem item = menu.getMenuItem(itemName);
+                            for (int i = 0; i < quantity; i++) {
+                                items.add(item);
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Please fill in all fields correctly.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(null, "Invalid quantity. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    break;
+                }
+            }
+
+            double totalAmount = calculateTotalAmount(itemsInOrder);
+            if (totalAmount < 100) {
+                if (!items.isEmpty() && !shouldExit.get()) {
+                    currentOrder = new Order(true, name, new ArrayList<>(items));
+                    orderService.addOrder(currentOrder);
+
+                    // Update the message label with a thank-you message and order status
+                    messageLabel.setText("Thanks, " + name + "! Your order status is: " + currentOrder.getStatus());
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Guests can only submit orders below $100.", "Order Limit", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }
+
+    private void handleAddOrder(String name, List<MenuItem> items) {
+        AtomicBoolean shouldExit = new AtomicBoolean(false);
+
+        while (true) {
+            JComboBox<String> itemComboBox = new JComboBox<>(menu.getAllMenuItems().toArray(new String[0]));
+            JTextField quantityField = new JTextField();
+
+            int rowNumber = items.size() + 4;
+            JPanel panel = new JPanel(new GridLayout(rowNumber, 2));
+            panel.add(new JLabel("Item Name:"));
+            panel.add(itemComboBox);
+            panel.add(new JLabel("Quantity:"));
+            panel.add(quantityField);
+
+            if (!items.isEmpty()) {
+                panel.add(new JLabel(""));
+                panel.add(new JLabel("Current Order"));
+                for (int i = 0; i < items.size(); i++) {
+                    MenuItem item = items.get(i);
+                    panel.add(new JLabel(item.getName()));
+
+                    JButton removeButton = new JButton("Remove");
+                    final int index = i;
+                    removeButton.addActionListener(e -> {
+                        items.remove(index);
+                        Window window = SwingUtilities.getWindowAncestor(panel);
+                        if (window instanceof JDialog) {
+                            ((JDialog) window).dispose();
+                        }
+                        handleAddOrder(name, items);
+                        shouldExit.set(true);
+                    });
+                    panel.add(removeButton);
+                }
+            }
+
+            Object[] options = new Object[]{"Add", "Finish"};
+
+            int result = JOptionPane.showOptionDialog(
+                    null,
+                    panel,
+                    "Add Item to Order",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    options,
+                    options[0]
+            );
+            if (result == JOptionPane.CLOSED_OPTION) {
+                return; // Stop processing if user closes the dialog
+            } else if (result == 0) {
+                try {
+                    String itemName = (String) itemComboBox.getSelectedItem();
+                    int quantity = Integer.parseInt(quantityField.getText());
+
+                    if (!itemName.isEmpty() && quantity > 0) {
+                        MenuItem item = menu.getMenuItem(itemName);
+                        for (int i = 0; i < quantity; i++) {
+                            items.add(item);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Please fill in all fields correctly.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Invalid quantity. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                break;
+            }
+        }
+
+        double totalAmount = calculateTotalAmount(itemsInOrder);
+        if (totalAmount < 100) {
+            if (!items.isEmpty() && !shouldExit.get()) {
+                currentOrder = new Order(true, name, new ArrayList<>(items));
+                orderService.addOrder(currentOrder);
+
+
+                messageLabel.setText("Thanks, " + name + "! Your order status is: " + currentOrder.getStatus());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Guests can only submit orders below $100.", "Order Limit", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private double calculateTotalAmount(List<MenuItem> items) {
+        return items.stream().mapToDouble(MenuItem::getPrice).sum();
+    }
+
+    private void refreshOrderStatus() {
+        if (currentOrder != null) {
+            messageLabel.setText("Thanks, " + currentOrder.getName() + "! Your order status is: " + currentOrder.getStatus());
+        }
+    }
+}

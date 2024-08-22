@@ -146,9 +146,10 @@ public class TakeoutPanel extends JPanel {
                         options, // options to display
                         options[0] // default button (first option in this case)
                 );
-
-                // Handle "Add" action
-                if (result == 0) {
+                if (result == JOptionPane.CLOSED_OPTION) {
+                    return; // Stop processing if user closes the dialog
+                    // Handle "Add" action
+                } else if (result == 0) {
                     try {
                         String itemName = (String) itemComboBox.getSelectedItem();
                         int quantity = Integer.parseInt(quantityField.getText());
@@ -238,9 +239,10 @@ public class TakeoutPanel extends JPanel {
                     options, // options to display
                     options[0] // default button (first option in this case)
             );
-
-            // Handle "Add" action
-            if (result == 0) {
+            if (result == JOptionPane.CLOSED_OPTION) {
+                return; // Stop processing if user closes the dialog
+                // Handle "Add" action
+            } else if (result == 0) {
                 try {
                     String itemName = (String) itemComboBox.getSelectedItem();
                     int quantity = Integer.parseInt(quantityField.getText());

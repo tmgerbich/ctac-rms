@@ -1,9 +1,6 @@
 package com.rms.service;
 
-import com.rms.model.Admin;
-import com.rms.model.Manager;
-import com.rms.model.Staff;
-import com.rms.model.User;
+import com.rms.model.*;
 import com.rms.util.FileManager;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -129,5 +126,9 @@ public class UserService {
     // Get user by username
     public User getUser(String username) {
         return users.get(username);
+    }
+
+    public User getGuestUser() {
+        return new Guest();
     }
 }

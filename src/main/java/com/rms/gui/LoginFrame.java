@@ -64,10 +64,21 @@ public class LoginFrame extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         panel.add(loginButton, gbc);
 
+        // Add the "Login as Guest" button
+        JButton guestButton = new JButton("Login as Guest");
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(guestButton, gbc);
+
         add(panel);
 
         // Login button action
         loginButton.addActionListener(e -> handleLogin());
+
+        // Guest button action
+        guestButton.addActionListener(e -> handleGuestLogin());
     }
 
     private void handleLogin() {
@@ -84,7 +95,13 @@ public class LoginFrame extends JFrame {
         }
     }
 
-    // Add this main method
+    private void handleGuestLogin() {
+        User guestUser = userService.getGuestUser();
+        JOptionPane.showMessageDialog(this, "Logged in as Guest.");
+        new RestaurantManagementApp(guestUser).setVisible(true);
+        dispose(); // Close the login window
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new LoginFrame().setVisible(true);
