@@ -137,7 +137,7 @@ public class CustomerOrderingPanel extends JPanel {
                 }
             }
 
-            double totalAmount = calculateTotalAmount(itemsInOrder);
+            double totalAmount = calculateTotalAmount(items);
             if (totalAmount < 100) {
                 if (!items.isEmpty() && !shouldExit.get()) {
                     currentOrder = new Order(true, name, new ArrayList<>(items));
@@ -223,7 +223,7 @@ public class CustomerOrderingPanel extends JPanel {
             }
         }
 
-        double totalAmount = calculateTotalAmount(itemsInOrder);
+        double totalAmount = calculateTotalAmount(items);
         if (totalAmount < 100) {
             if (!items.isEmpty() && !shouldExit.get()) {
                 currentOrder = new Order(true, name, new ArrayList<>(items));
