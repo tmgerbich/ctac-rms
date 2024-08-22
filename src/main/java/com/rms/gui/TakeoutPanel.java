@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TakeoutPanel extends JPanel {
     private OrderService orderService;
@@ -63,6 +64,7 @@ public class TakeoutPanel extends JPanel {
     private void handleAddTakeoutOrder() {
         List<MenuItem> items = new ArrayList<>();
         String name;
+        AtomicBoolean shouldExit = new AtomicBoolean(false);
         JTextField nameField = new JTextField();
         JPanel namePanel = new JPanel(new GridLayout(1,1));
         namePanel.add(nameField);
@@ -103,11 +105,23 @@ public class TakeoutPanel extends JPanel {
                         final int index = i;  // Use final or effectively final variable for lambda
                         removeButton.addActionListener(e -> {
                             items.remove(index);
+                            // Close the current dialog
+                            Window window = SwingUtilities.getWindowAncestor(panel);
+                            if (window instanceof JDialog) {
+                                ((JDialog) window).dispose();
+                            }
                             // Refresh the dialog by re-calling handleTakeoutOrder with items as a parameter using overloaded
                             handleAddTakeoutOrder(name, items);
+                            shouldExit.set(true);
+
                         });
                         panel.add(removeButton);
                     }
+                }
+
+                // Return from the method if the flag is set
+                if (shouldExit.get()) {
+                    return;
                 }
 
                 // Define the options for the custom dialog
@@ -147,7 +161,7 @@ public class TakeoutPanel extends JPanel {
                 }
             }
 
-            if (!items.isEmpty()) {
+            if (!items.isEmpty() && !shouldExit.get()) {
                 // Create and process the order
                 Order order = new Order(true, name, new ArrayList<>(items));
                 orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
@@ -159,6 +173,7 @@ public class TakeoutPanel extends JPanel {
 
     //overloaded constructor to keep order when removing and recalling function
     private void handleAddTakeoutOrder(String name, List<MenuItem> items) {
+        AtomicBoolean shouldExit = new AtomicBoolean(false);
 
         while (true) {
             JComboBox<String> itemComboBox = new JComboBox<>(menu.getAllMenuItems().toArray(new String[0]));
@@ -185,11 +200,23 @@ public class TakeoutPanel extends JPanel {
                     final int index = i;  // Use final or effectively final variable for lambda
                     removeButton.addActionListener(e -> {
                         items.remove(index);
-                        // Refresh the dialog by re-calling takeOrder using this overloaded constructor to maintain current order
+                        // Close the current dialog
+                        Window window = SwingUtilities.getWindowAncestor(panel);
+                        if (window instanceof JDialog) {
+                            ((JDialog) window).dispose();
+                        }
+                        // Refresh the dialog by re-calling handleTakeoutOrder with items as a parameter using overloaded
                         handleAddTakeoutOrder(name, items);
+                        shouldExit.set(true);
+
                     });
                     panel.add(removeButton);
                 }
+            }
+
+            // Return from the method if the flag is set
+            if (shouldExit.get()) {
+                return;
             }
 
             // Define the options for the custom dialog
@@ -229,7 +256,7 @@ public class TakeoutPanel extends JPanel {
             }
         }
 
-        if (!items.isEmpty()) {
+        if (!items.isEmpty() && !shouldExit.get()) {
             // Create and process the order
             Order order = new Order(true, name, new ArrayList<>(items));
             orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
