@@ -21,21 +21,22 @@ public class RestaurantManagementApp extends JFrame {
 
     public RestaurantManagementApp(User currentUser) {
         this.currentUser = currentUser;
-        this.tableService = new TableService(true); //fix this later, hard coding in new day
-        this.orderService = new OrderService(true); //fix this later, hard coding in new day
+        this.tableService = new TableService(true); // Fix this later, hardcoding a new day
+        this.orderService = new OrderService(true); // Fix this later, hardcoding a new day
         this.menu = new Menu();
         this.inventory = new Inventory();
+
         setTitle("Restaurant Management System");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-
 
         InventoryPanel inventoryPanel = new InventoryPanel();
         TablePanel tablePanel = new TablePanel(tableService, orderService, menu, inventory);
         TakeoutPanel takeoutPanel = new TakeoutPanel(orderService, menu, inventory);
         MenuManagementPanel menuPanel = new MenuManagementPanel(menu, inventory);
         OrderManagementPanel orderPanel = new OrderManagementPanel(menu, inventory, orderService);
+        CustomerOrderingPanel customerPanel = new CustomerOrderingPanel(menu, inventory, orderService, currentUser);
 
         // Create a menu bar with a logout option
         JMenuBar menuBar = new JMenuBar();
@@ -55,14 +56,21 @@ public class RestaurantManagementApp extends JFrame {
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Add the tabs
-        tabbedPane.addTab("Staff Management", new StaffManagementPanel(currentUser));
-        tabbedPane.addTab("Menu Management", menuPanel);
-        tabbedPane.addTab("Inventory", inventoryPanel);
-        tabbedPane.addTab("Table Orders", tablePanel);
-        tabbedPane.addTab("Takeout Orders", takeoutPanel);
+        // Check if the current user is a guest
+        boolean isGuest = currentUser instanceof com.rms.model.Guest;
 
-        tabbedPane.addTab("Order Management", orderPanel);
+        // Add the tabs based on user role
+        if (!isGuest) {
+            tabbedPane.addTab("Staff Management", new StaffManagementPanel(currentUser));
+            tabbedPane.addTab("Menu Management", menuPanel);
+            tabbedPane.addTab("Inventory", inventoryPanel);
+            tabbedPane.addTab("Table Orders", tablePanel);
+            tabbedPane.addTab("Takeout Orders", takeoutPanel);
+            tabbedPane.addTab("Orders", orderPanel);
+        }
+
+
+        tabbedPane.addTab("Guest Ordering", customerPanel);
 
         // Add ChangeListener to the tabbed pane
         tabbedPane.addChangeListener(new ChangeListener() {
@@ -71,18 +79,20 @@ public class RestaurantManagementApp extends JFrame {
                 int selectedIndex = tabbedPane.getSelectedIndex();
                 switch (selectedIndex) {
                     case 1: // Menu Management Tab
-                        tablePanel.refreshTables();
+                        if (!isGuest) tablePanel.refreshTables();
                         break;
-                    case 2: //Inventory Tab
-                        break;
+                    case 2: // Inventory Tab
+                        if (!isGuest) break;
                     case 3: // Table Orders tab
-                        tablePanel.refreshTables();
+                        if (!isGuest) tablePanel.refreshTables();
                         break;
                     case 4: // Takeout Orders tab
-                        takeoutPanel.updateTakeoutOrderTable();
+                        if (!isGuest) takeoutPanel.updateTakeoutOrderTable();
                         break;
                     case 5: // Order Management tab
                         orderPanel.updateOrderTable();
+                        break;
+                    case 6: // Customer tab
                         break;
                     // Add cases for other tabs if needed
                 }

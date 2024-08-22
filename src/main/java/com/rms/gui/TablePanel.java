@@ -11,12 +11,11 @@ import com.rms.service.OrderService;
 import com.rms.service.TableService;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TablePanel extends JPanel {
@@ -88,7 +87,6 @@ public class TablePanel extends JPanel {
                     table.setTableStatus(TableStatus.SERVED);
                     updateTableButton(table, tableButton);
                 } else if (order == null) {
-                    System.out.println("No order found for table " + table.getTableName());
                     // Handle the case where no order is found for the table, if needed
                 }
             } catch (Exception e) {
@@ -111,14 +109,95 @@ public class TablePanel extends JPanel {
                 takeOrder(table, tableButton);
                 break;
             case ORDERED:
-                JOptionPane.showMessageDialog(this, "The party has already ordered.", "Info", JOptionPane.INFORMATION_MESSAGE);
-                break;
             case SERVED:
-                JOptionPane.showMessageDialog(this, "The party has already been served.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                showOrderOptions(table);
                 break;
             default:
                 JOptionPane.showMessageDialog(this, "Invalid table status.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void showOrderOptions(Table table) {
+        Order order = orderService.getOrderForTable(table);
+        if (order == null) {
+            JOptionPane.showMessageDialog(this, "No order found for this table.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Panel to hold the message and buttons
+        JPanel panel = new JPanel(new BorderLayout());
+        JLabel messageLabel = new JLabel(table.getTableStatus() == TableStatus.ORDERED ?
+                "The party has already ordered." :
+                "The party has already been served.");
+        panel.add(messageLabel, BorderLayout.CENTER);
+
+        // Custom buttons for the dialog
+        JButton okButton = new JButton("OK");
+        JButton showOrderButton = new JButton("Show Order");
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(okButton);
+        buttonPanel.add(showOrderButton);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
+        // Show the dialog
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Table Status", true);
+        dialog.getContentPane().add(panel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+
+        // Action for the OK button
+        okButton.addActionListener(e -> dialog.dispose());
+
+        // Action for the Show Order button
+        showOrderButton.addActionListener(e -> {
+            dialog.dispose(); // Close the current dialog
+            showOrderDetails(order); // Show the order details
+        });
+
+        dialog.setVisible(true);
+    }
+
+    private void showOrderDetails(Order order) {
+        JPanel panel = new JPanel(new GridLayout(0, 2)); // Grid layout with dynamic rows
+        panel.add(new JLabel("Order Details"));
+        panel.add(new JLabel(""));
+
+        panel.add(new JLabel("Table:"));
+        panel.add(new JLabel(order.getTable().getTableName()));
+
+        // Calculate quantities for each unique item
+        List<MenuItem> items = order.getItems();
+        Map<MenuItem, Integer> itemQuantityMap = new HashMap<>();
+
+        for (MenuItem item : items) {
+            itemQuantityMap.put(item, itemQuantityMap.getOrDefault(item, 0) + 1);
+        }
+
+        // Add each item with its quantity to the panel
+        panel.add(new JLabel("Items:"));
+        panel.add(new JLabel("")); // Empty label for spacing
+
+        for (Map.Entry<MenuItem, Integer> entry : itemQuantityMap.entrySet()) {
+            MenuItem item = entry.getKey();
+            int quantity = entry.getValue();
+            panel.add(new JLabel(item.getName()));
+            panel.add(new JLabel("Quantity: " + quantity));
+        }
+
+        panel.add(new JLabel("Price: "));
+        panel.add(new JLabel("$" + String.format("%.2f", order.getPrice())));
+        panel.add(new JLabel("Status: "));
+        panel.add(new JLabel(String.valueOf(order.getStatus())));
+
+
+
+
+        panel.add(new JLabel("")); // Empty label for spacing
+
+
+        // Show the panel in a dialog
+        JOptionPane.showMessageDialog(this, panel, "Order Details", JOptionPane.PLAIN_MESSAGE);
     }
 
     private void assignCustomerOrReserve(Table table, JButton tableButton) {
@@ -210,9 +289,10 @@ public class TablePanel extends JPanel {
                     options, // options to display
                     options[0] // default button (first option in this case)
             );
-
-            // Handle "Add" action
-            if (result == 0) {
+            if (result == JOptionPane.CLOSED_OPTION) {
+                return; // Stop processing if user closes the dialog
+                // Handle "Add" action
+            } else if (result == 0) {
                 try {
                     String itemName = (String) itemComboBox.getSelectedItem();
                     int quantity = Integer.parseInt(quantityField.getText());
@@ -301,9 +381,10 @@ public class TablePanel extends JPanel {
                     options, // options to display
                     options[0] // default button (first option in this case)
             );
-
-            // Handle "Add" action
-            if (result == 0) {
+            if (result == JOptionPane.CLOSED_OPTION) {
+                return; // Stop processing if user closes the dialog
+                // Handle "Add" action
+            } else if (result == 0) {
                 try {
                     String itemName = (String) itemComboBox.getSelectedItem();
                     int quantity = Integer.parseInt(quantityField.getText());
@@ -335,7 +416,6 @@ public class TablePanel extends JPanel {
 
         updateTableButton(table, tableButton);  // Update button text and color after changes
     }
-
 
     private void clearTable(Table table, JButton tableButton) {
         Order order = orderService.getOrderForTable(table);

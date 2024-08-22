@@ -107,6 +107,7 @@ public class Inventory implements Serializable{
     }
 
     public List<String> getAllIngredients() {
+        loadIngredients();
         return ingredients.keySet().stream().collect(Collectors.toList());
     }
 

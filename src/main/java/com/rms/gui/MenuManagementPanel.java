@@ -24,7 +24,7 @@ public class MenuManagementPanel extends JPanel {
         setLayout(new BorderLayout());
 
         // Table setup
-        String[] columnNames = {"Name", "Description", "Price", "Prep Time"};
+        String[] columnNames = {"Name", "Ingredients", "Description", "Price", "Prep Time (seconds)"};
         tableModel = new DefaultTableModel(columnNames, 0);
         menuTable = new JTable(tableModel);
         updateMenuTable();
@@ -54,11 +54,26 @@ public class MenuManagementPanel extends JPanel {
             MenuItem item = menu.getMenuItem(itemName);
             tableModel.addRow(new Object[]{
                     item.getName(),
+                    formatIngredients(item.getIngredients()), // Display ingredients in JTable
                     item.getDescription(),
-                    item.getPrice(),
+                    String.format("$%.2f", item.getPrice()), // Format the price with a dollar sign
                     formatDuration(item.getPrepTime())
             });
         }
+    }
+
+    private String formatIngredients(List<Ingredient> ingredients) {
+        StringBuilder ingredientsList = new StringBuilder();
+        for (Ingredient ingredient : ingredients) {
+            if (ingredient.getQuantity() > 0) {
+                ingredientsList.append(ingredient.getName()).append(" (").append(ingredient.getQuantity()).append("), ");
+            }
+        }
+        // Remove the trailing comma and space
+        if (ingredientsList.length() > 0) {
+            ingredientsList.setLength(ingredientsList.length() - 2);
+        }
+        return ingredientsList.toString();
     }
 
     private void handleAddMenuItem() {
@@ -177,6 +192,7 @@ public class MenuManagementPanel extends JPanel {
                 quantityField4.setText(String.valueOf(currentItem.getIngredients().get(3).getQuantity()));
             }
 
+
             JPanel panel = new JPanel(new GridLayout(12, 4));
             panel.add(new JLabel("Name:"));
             panel.add(nameField);
@@ -203,13 +219,14 @@ public class MenuManagementPanel extends JPanel {
             panel.add(new JLabel("Quantity 4:"));
             panel.add(quantityField4);
 
+
             int result = JOptionPane.showConfirmDialog(null, panel, "Edit Menu Item", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
             if (result == JOptionPane.OK_OPTION) {
                 String name = nameField.getText();
                 String description = descriptionField.getText();
                 double price = Double.parseDouble(priceField.getText());
-                Duration prepTime = Duration.ofMinutes(Long.parseLong(prepTimeField.getText()));
+                Duration prepTime = Duration.ofSeconds(Long.parseLong(prepTimeField.getText()));
 
                 // Prepare the updated ingredients list
                 List<Ingredient> ingredients = new ArrayList<>();
@@ -217,6 +234,7 @@ public class MenuManagementPanel extends JPanel {
                 addIngredientToList(ingredients, ingredientsComboBox2, quantityField2);
                 addIngredientToList(ingredients, ingredientsComboBox3, quantityField3);
                 addIngredientToList(ingredients, ingredientsComboBox4, quantityField4);
+
 
                 MenuItem updatedItem = new MenuItem(name, description, prepTime, price, new ArrayList<>(ingredients));
                 if (menu.editMenuItem(selectedName, updatedItem)) {
@@ -256,8 +274,6 @@ public class MenuManagementPanel extends JPanel {
 
 
     private String formatDuration(Duration duration) {
-        long minutes = duration.toMinutes();
-        long seconds = duration.minusMinutes(minutes).getSeconds();
-        return String.format("%d min", minutes);
+        return String.format("%d sec", duration.getSeconds());
     }
 }
