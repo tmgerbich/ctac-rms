@@ -76,17 +76,17 @@ public class TablePanel extends JPanel {
 
     public void refreshTables() {
 
-            for (Map.Entry<Table, JButton> entry : tableButtonMap.entrySet()) {
-                Table table = entry.getKey();
-                JButton tableButton = entry.getValue();
-                Order order = orderService.getOrderForTable(table);
+        for (Map.Entry<Table, JButton> entry : tableButtonMap.entrySet()) {
+            Table table = entry.getKey();
+            JButton tableButton = entry.getValue();
+            Order order = orderService.getOrderForTable(table);
 
-                if (order != null && order.getStatus() == OrderStatus.COMPLETED) {
-                    System.out.println("Order " + order.getOrderID() + " status: " + order.getStatus());
-                    table.setTableStatus(TableStatus.SERVED);
-                    updateTableButton(table, tableButton);
-                }
+            if (order != null && order.getStatus() == OrderStatus.COMPLETED) {
+                System.out.println("Order " + order.getOrderID() + " status: " + order.getStatus());
+                table.setTableStatus(TableStatus.SERVED);
+                updateTableButton(table, tableButton);
             }
+        }
 
     }
 
