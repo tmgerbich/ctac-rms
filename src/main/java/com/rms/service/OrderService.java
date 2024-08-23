@@ -41,11 +41,45 @@ public class OrderService {
     }
 
     public void updateOrderStatus(int orderId, OrderStatus status) {
-            if (orders.containsKey(orderId)) {
-                orders.get(orderId).setStatus(status);
-                saveOrders();
+        if (orders.containsKey(orderId)) {
+            orders.get(orderId).setStatus(status);
+            saveOrders();
         }
     }
+
+    public double getTotalRevenue() {
+        return orders.values().stream()
+                .mapToDouble(Order::getPrice)
+                .sum();
+    }
+
+    public List<String> getMostPopularItems() {
+        // Create a map to count the occurrences of each item
+        Map<String, Long> itemCount = orders.values().stream()
+                .flatMap(order -> order.getItems().stream())
+                .collect(Collectors.groupingBy(MenuItem::getName, Collectors.counting()));
+
+        // Sort the map by value in descending order and return the top items
+        return itemCount.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .map(entry -> entry.getKey() + ": " + entry.getValue() + " orders")
+                .collect(Collectors.toList());
+    }
+
+    public List<Order> getDetailedOrders() {
+        return orders.values().stream()
+                .collect(Collectors.toList());
+    }
+
+    public Map<String, Double> getTableSales() {
+        return orders.values().stream()
+                .filter(order -> !order.isTakeOut())
+                .collect(Collectors.groupingBy(
+                        order -> order.getTable().getTableName(), // Group by table name or ID
+                        Collectors.summingDouble(Order::getPrice) // Sum the total prices for each table
+                ));
+    }
+
 
     // Get an order by ID
     public Order getOrder(int orderId) {

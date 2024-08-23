@@ -109,8 +109,12 @@ public class RestaurantManagementApp extends JFrame {
                     case 5: // Order Management tab
                         orderPanel.updateOrderTable();
                         break;
-                    case 6: // Customer tab
+                    case 6: // Sales tab
+                        salesPanel.populateReport();
                         break;
+                    case 7: // Guest tab
+                        break;
+
                     // Add cases for other tabs if needed
                 }
             }
