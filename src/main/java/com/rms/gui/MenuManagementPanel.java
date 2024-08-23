@@ -200,7 +200,7 @@ public class MenuManagementPanel extends JPanel {
             panel.add(descriptionField);
             panel.add(new JLabel("Price:"));
             panel.add(priceField);
-            panel.add(new JLabel("Prep Time (in minutes):"));
+            panel.add(new JLabel("Prep Time (in seconds):"));
             panel.add(prepTimeField);
             panel.add(new JLabel("Ingredient 1:"));
             panel.add(ingredientsComboBox1);

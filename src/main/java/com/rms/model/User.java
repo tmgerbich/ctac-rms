@@ -6,6 +6,7 @@ public abstract class User implements Serializable {
     private String username;
     private String hashedPassword;
 
+
     public User(String username, String hashedPassword) {
         this.username = username;
         this.hashedPassword = hashedPassword;

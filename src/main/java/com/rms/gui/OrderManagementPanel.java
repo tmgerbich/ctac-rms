@@ -48,6 +48,10 @@ public class OrderManagementPanel extends JPanel {
 
     }
 
+    public OrderService getOrderService() {
+        return orderService;
+    }
+
     public void updateOrderTable() {
         tableModel.setRowCount(0); // Clear the table before adding rows
         for (Order order : orderService.getActiveOrders()) {
@@ -59,6 +63,7 @@ public class OrderManagementPanel extends JPanel {
                     order.getStatus()
             });
         }
+        getOrderService().saveOrders();
     }
 
     private void showOrderDetails() {

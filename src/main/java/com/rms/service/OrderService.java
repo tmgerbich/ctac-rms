@@ -81,6 +81,7 @@ public class OrderService {
     }
 
 
+
     // Get an order by ID
     public Order getOrder(int orderId) {
         for (Map.Entry<Integer, Order> entry : orders.entrySet()) {
@@ -120,7 +121,7 @@ public class OrderService {
         return null;
     }
 
-    private void saveOrders() {
+    public void saveOrders() {
         FileManager.saveOrders(orders, "orders.dat");
     }
 

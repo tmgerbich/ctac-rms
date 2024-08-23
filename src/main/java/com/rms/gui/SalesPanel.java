@@ -50,7 +50,6 @@ public class SalesPanel extends JPanel {
         saveReportButton.addActionListener(e -> saveReport());
         endDayButton.addActionListener(e -> {
             endDay();
-            System.exit(0);
         });
 
         // Panel for buttons
@@ -120,10 +119,10 @@ public class SalesPanel extends JPanel {
 
                 reportBuilder.append(" - ").append(itemName)
                         .append(": ").append(quantity)
-                        .append(" ($").append(itemPrice * quantity).append(")\n");
+                        .append(" ($").append(String.format("%.2f",itemPrice * quantity)).append(")\n");
             }
 
-            reportBuilder.append("Total: $").append(order.getPrice()).append("\n\n");
+            reportBuilder.append("Total: $").append(String.format("%.2f",order.getPrice())).append("\n\n");
         }
 
 
@@ -133,8 +132,9 @@ public class SalesPanel extends JPanel {
 
     private void saveReport() {
         String report = reportArea.getText();
+        String today = String.valueOf(java.time.LocalDate.now());
         if (!report.isEmpty()) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("sales_report.txt"))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(today + "-sales_report.txt"))) {
                 writer.write(report);
                 JOptionPane.showMessageDialog(this, "Sales report saved successfully.");
             } catch (IOException ex) {
@@ -146,7 +146,17 @@ public class SalesPanel extends JPanel {
     }
 
     public void endDay() {
+        int confirmResult = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to close out for the day?",
+                "Confirm Close Out",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+        if (confirmResult == JOptionPane.YES_OPTION) {
         dayNewOrNot.setNewOrNot(DayNewOrNot.NEW);
         dayNewOrNot.saveDayNewOrNot();
+            System.exit(0);}
+        else {JOptionPane.showMessageDialog(this, "Close Out Canceled");}
     }
 }
