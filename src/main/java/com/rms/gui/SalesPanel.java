@@ -85,6 +85,14 @@ public class SalesPanel extends JPanel {
         }
         reportBuilder.append("\n");
 
+        reportBuilder.append("Takeout Sales:\n");
+        Double takeoutSales = orderService.getTakeoutSales();
+        reportBuilder.append(": $")
+                .append(String.format("%.2f", takeoutSales)).append("\n");
+
+        reportBuilder.append("\n");
+
+
         reportBuilder.append("Table Sales:\n");
         Map<String, Double> tableSales = orderService.getTableSales();
         int tableCount = 1;
@@ -93,6 +101,7 @@ public class SalesPanel extends JPanel {
                     .append(String.format("%.2f", entry.getValue())).append("\n");
         }
         reportBuilder.append("\n");
+
 
         reportBuilder.append("Detailed Orders:\n");
         List<Order> detailedOrders = orderService.getDetailedOrders();

@@ -80,6 +80,12 @@ public class OrderService {
                 ));
     }
 
+    public double getTakeoutSales() {
+        return orders.values().stream()
+                .filter(Order::isTakeOut)
+                .mapToDouble(Order::getPrice)
+                .sum();
+    }
 
 
     // Get an order by ID
