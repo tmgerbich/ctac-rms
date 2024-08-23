@@ -1,18 +1,24 @@
 package com.rms.gui;
 
+import com.rms.enums.DayNewOrNot;
+import com.rms.model.Day;
 import com.rms.model.User;
 import com.rms.service.UserService;
 
 import javax.swing.*;
 import java.awt.*;
 
+import static com.rms.util.FileManager.loadDayNewOrNot;
+
 public class LoginFrame extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private UserService userService;
+    private Day dayNewOrNot;
 
     public LoginFrame() {
         userService = new UserService(); // Initialize the user service
+        dayNewOrNot = new Day();
 
         setTitle("Restaurant Management System");
         setSize(400, 300);
@@ -88,7 +94,7 @@ public class LoginFrame extends JFrame {
         User user = userService.authenticate(username, password);
         if (user != null) {
             JOptionPane.showMessageDialog(this, "Login successful!");
-            new RestaurantManagementApp(user).setVisible(true);
+            new RestaurantManagementApp(user, dayNewOrNot).setVisible(true);
             dispose(); // Close the login window
         } else {
             JOptionPane.showMessageDialog(this, "Invalid username or password.");
@@ -98,7 +104,7 @@ public class LoginFrame extends JFrame {
     private void handleGuestLogin() {
         User guestUser = userService.createGuestUser(); // Correct method name
         JOptionPane.showMessageDialog(this, "Logged in as Guest.");
-        new RestaurantManagementApp(guestUser).setVisible(true);
+        new RestaurantManagementApp(guestUser, dayNewOrNot).setVisible(true);
         dispose(); // Close the login window
     }
 

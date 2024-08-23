@@ -1,5 +1,6 @@
 package com.rms.util;
 
+import com.rms.enums.DayNewOrNot;
 import com.rms.model.*;
 
 import java.io.*;
@@ -90,6 +91,23 @@ public class FileManager {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return new HashMap<>();
+        }
+    }
+
+    public static void saveDayNewOrNot(DayNewOrNot dayNewOrNot, String fileName) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            oos.writeObject(dayNewOrNot);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static DayNewOrNot loadDayNewOrNot(String fileName) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
+            return (DayNewOrNot) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return DayNewOrNot.NEW;
         }
     }
 

@@ -1,10 +1,13 @@
 package com.rms.gui;
 
+import com.rms.enums.DayNewOrNot;
+import com.rms.model.Day;
 import com.rms.model.User;
 import com.rms.service.Inventory;
 import com.rms.service.Menu;
 import com.rms.service.OrderService;
 import com.rms.service.TableService;
+
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -18,13 +21,23 @@ public class RestaurantManagementApp extends JFrame {
     private OrderService orderService;
     private Menu menu;
     private Inventory inventory;
+    private Day dayNewOrNot;
 
-    public RestaurantManagementApp(User currentUser) {
+    public RestaurantManagementApp(User currentUser, Day dayNewOrNot) {
         this.currentUser = currentUser;
-        this.tableService = new TableService(true); // Fix this later, hardcoding a new day
-        this.orderService = new OrderService(true); // Fix this later, hardcoding a new day
+        this.dayNewOrNot = dayNewOrNot;
+        if (dayNewOrNot.getNewOrNot() == DayNewOrNot.NEW) {
+            this.tableService = new TableService(true);
+            this.orderService = new OrderService(true);
+        }
+        else {
+            this.tableService = new TableService(false);
+            this.orderService = new OrderService(false);
+        }
         this.menu = new Menu();
         this.inventory = new Inventory();
+        dayNewOrNot.setNewOrNot(DayNewOrNot.OLD);
+        dayNewOrNot.saveDayNewOrNot();
 
         setTitle("Restaurant Management System");
         setSize(800, 600);
@@ -37,6 +50,7 @@ public class RestaurantManagementApp extends JFrame {
         MenuManagementPanel menuPanel = new MenuManagementPanel(menu, inventory);
         OrderManagementPanel orderPanel = new OrderManagementPanel(menu, inventory, orderService);
         CustomerOrderingPanel customerPanel = new CustomerOrderingPanel(menu, inventory, orderService, currentUser);
+        SalesPanel salesPanel = new SalesPanel(inventory, tableService, orderService);
 
         // Create a menu bar with a logout option
         JMenuBar menuBar = new JMenuBar();
@@ -62,11 +76,14 @@ public class RestaurantManagementApp extends JFrame {
         // Add the tabs based on user role
         if (!isGuest) {
             tabbedPane.addTab("Staff Management", new StaffManagementPanel(currentUser));
-            tabbedPane.addTab("Menu Management", menuPanel);
+            tabbedPane.addTab("Menu", menuPanel);
             tabbedPane.addTab("Inventory", inventoryPanel);
             tabbedPane.addTab("Table Orders", tablePanel);
             tabbedPane.addTab("Takeout Orders", takeoutPanel);
             tabbedPane.addTab("Orders", orderPanel);
+            if (currentUser.canAddStaff()) {
+                tabbedPane.addTab("Sales Panel", salesPanel);
+            }
         }
 
 
