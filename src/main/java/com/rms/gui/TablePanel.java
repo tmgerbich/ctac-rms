@@ -317,10 +317,13 @@ public class TablePanel extends JPanel {
         if (!items.isEmpty() && !shouldExit.get()) {
             // Create and process the order
             Order order = new Order(table, new ArrayList<>(items));
+            if (orderService.subtractIngredients(inventory, order)){
             orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
             table.setTableStatus(TableStatus.ORDERED); // Change status to ordered
             JOptionPane.showMessageDialog(null, "Order placed successfully for " + table.getTableName());
-        }
+        }else {
+                JOptionPane.showMessageDialog(null, "Out of Stock");
+            }}
 
         updateTableButton(table, tableButton);  // Update button text and color after changes
     }
@@ -409,10 +412,13 @@ public class TablePanel extends JPanel {
         if (!items.isEmpty() && !shouldExit.get()) {
             // Create and process the order
             Order order = new Order(table, new ArrayList<>(items));
-            orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
-            table.setTableStatus(TableStatus.ORDERED); // Change status to ordered
-            JOptionPane.showMessageDialog(null, "Order placed successfully for " + table.getTableName());
-        }
+            if (orderService.subtractIngredients(inventory, order)){
+                orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
+                table.setTableStatus(TableStatus.ORDERED); // Change status to ordered
+                JOptionPane.showMessageDialog(null, "Order placed successfully for " + table.getTableName());
+            } else {
+            JOptionPane.showMessageDialog(null, "Out of Stock");
+        }}
 
         updateTableButton(table, tableButton);  // Update button text and color after changes
     }

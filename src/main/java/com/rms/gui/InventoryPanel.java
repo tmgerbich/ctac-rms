@@ -5,6 +5,7 @@ import com.rms.service.Inventory;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 
 public class InventoryPanel extends JPanel {
@@ -13,15 +14,29 @@ public class InventoryPanel extends JPanel {
     private JTable inventoryTable;
     private JButton editButton; // Declare the editButton
 
-    public InventoryPanel() {
-        this.inventory = new Inventory();
+    public InventoryPanel(Inventory inventory) {
+        this.inventory = inventory;
 
         setLayout(new BorderLayout());
 
         // Set up JTable for structured display
         String[] columnNames = {"Ingredient", "Quantity", "Unit"};
         tableModel = new DefaultTableModel(columnNames, 0);
-        inventoryTable = new JTable(tableModel);
+        inventoryTable = new JTable(tableModel){
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component component = super.prepareRenderer(renderer, row, column);
+                int quantity = (int) getModel().getValueAt(row, 1);
+
+                if (quantity < 20) {
+                    component.setBackground(Color.YELLOW); // Highlight the row in yellow if quantity < 20
+                } else {
+                    component.setBackground(Color.WHITE); // Default background color
+                }
+
+                return component;
+            }
+        };;
         updateInventoryTable(); // Populate JTable
 
         add(new JScrollPane(inventoryTable), BorderLayout.CENTER);
@@ -49,7 +64,7 @@ public class InventoryPanel extends JPanel {
         editButton.addActionListener(e -> handleEditIngredient()); // Set action for editButton
     }
 
-    private void updateInventoryTable() {
+    public void updateInventoryTable() {
         tableModel.setRowCount(0); // Clear the table before adding rows
         for (Ingredient ingredient : inventory.getAllIngredientsDetailed()) {
             tableModel.addRow(new Object[]{ingredient.getName(), ingredient.getQuantity(), ingredient.getUnit()});
@@ -108,6 +123,7 @@ public class InventoryPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "Failed to parse quantity.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+        updateInventoryTable();
     }
 
     private void handleRemoveIngredient() {
@@ -138,6 +154,7 @@ public class InventoryPanel extends JPanel {
         } else {
             JOptionPane.showMessageDialog(this, "Please select an ingredient to remove.");
         }
+        updateInventoryTable();
     }
 
     private void handleEditIngredient() {
@@ -207,6 +224,7 @@ public class InventoryPanel extends JPanel {
         } else {
             JOptionPane.showMessageDialog(this, "Please select an ingredient to edit.");
         }
+        updateInventoryTable();
     }
 
 
@@ -218,7 +236,9 @@ public class InventoryPanel extends JPanel {
 
             JTextField restockField = new JTextField();
 
-            JPanel panel = new JPanel(new GridLayout(2, 2));
+            JPanel panel = new JPanel(new GridLayout(3, 2));
+            panel.add(new JLabel("Ingredient:"));
+            panel.add(new JLabel(ingredientName));
             panel.add(new JLabel("Current Quantity:"));
             panel.add(new JLabel(currentQuantity.toString())); // Display the current quantity
             panel.add(new JLabel("Quantity to Add:"));
@@ -269,5 +289,6 @@ public class InventoryPanel extends JPanel {
         } else {
             JOptionPane.showMessageDialog(this, "Please select an ingredient to restock.");
         }
+        updateInventoryTable();
     }
 }

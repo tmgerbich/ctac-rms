@@ -1,6 +1,7 @@
 package com.rms.gui;
 
 import com.rms.enums.OrderStatus;
+import com.rms.enums.TableStatus;
 import com.rms.service.Inventory;
 import com.rms.model.MenuItem;
 import com.rms.model.Order;
@@ -170,12 +171,15 @@ public class TakeoutPanel extends JPanel {
                 }
             }
 
-            if (!items.isEmpty() && !shouldExit.get()) { //this checks the boolean to see if this is the final order submission or a leftover thing still needing to finish out since return wasn't working and if so does not add the order
+            if (!items.isEmpty() && !shouldExit.get()) {
                 // Create and process the order
                 Order order = new Order(true, name, new ArrayList<>(items));
-                orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
-                JOptionPane.showMessageDialog(this, "Order placed successfully");
-            }
+                if (orderService.subtractIngredients(inventory, order)){
+                    orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
+                    JOptionPane.showMessageDialog(this, "Order placed successfully");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Out of Stock");
+                }}
             updateTakeoutOrderTable();
         }
     }
@@ -263,12 +267,15 @@ public class TakeoutPanel extends JPanel {
             }
         }
 
-        if (!items.isEmpty() && !shouldExit.get()) { //this checks the boolean to see if this is the final order submission or a leftover thing still needing to finish out since return wasn't working and if so does not add the order
+        if (!items.isEmpty() && !shouldExit.get()) {
             // Create and process the order
             Order order = new Order(true, name, new ArrayList<>(items));
-            orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
-            JOptionPane.showMessageDialog(this, "Order placed successfully");
-        }
+            if (orderService.subtractIngredients(inventory, order)){
+                orderService.addOrder(order); // The order will automatically be processed by the OrderProcessor
+                JOptionPane.showMessageDialog(this, "Order placed successfully");
+            } else {
+                JOptionPane.showMessageDialog(null, "Out of Stock");
+            }}
 
         updateTakeoutOrderTable();
     }

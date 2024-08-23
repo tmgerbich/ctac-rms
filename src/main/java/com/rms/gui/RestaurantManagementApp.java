@@ -31,7 +31,7 @@ public class RestaurantManagementApp extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        InventoryPanel inventoryPanel = new InventoryPanel();
+        InventoryPanel inventoryPanel = new InventoryPanel(inventory);
         TablePanel tablePanel = new TablePanel(tableService, orderService, menu, inventory);
         TakeoutPanel takeoutPanel = new TakeoutPanel(orderService, menu, inventory);
         MenuManagementPanel menuPanel = new MenuManagementPanel(menu, inventory);
@@ -82,7 +82,7 @@ public class RestaurantManagementApp extends JFrame {
                         if (!isGuest) tablePanel.refreshTables();
                         break;
                     case 2: // Inventory Tab
-                        if (!isGuest) break;
+                        if (!isGuest) inventoryPanel.updateInventoryTable();
                     case 3: // Table Orders tab
                         if (!isGuest) tablePanel.refreshTables();
                         break;

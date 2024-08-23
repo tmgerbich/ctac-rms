@@ -175,18 +175,24 @@ public class CustomerOrderingPanel extends JPanel {
         if (totalAmount < 100) {
             if (!items.isEmpty() && !shouldExit.get()) {
                 currentOrder = new Order(true, name, new ArrayList<>(items));
-                orderService.addOrder(currentOrder);
-                orderCompleted = false; // Reset the flag for the new order
 
-                // Display thank-you message and start timer to reset it
-                displayPreparingMessage(name);
+                if (orderService.subtractIngredients(inventory, currentOrder)) {
+                    orderService.addOrder(currentOrder);
+                    orderCompleted = false; // Reset the flag for the new order
+
+                    // Display thank-you message and start timer to reset it
+                    displayPreparingMessage(name);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Out of Stock");
+                }
             }
         } else {
             JOptionPane.showMessageDialog(this, "Guests can only submit orders below $100.", "Order Limit", JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    private void displayPreparingMessage(String name) {
+
+        public void displayPreparingMessage(String name) {
         messageLabel.setText("Thanks, " + name + "! Your order status is: " + currentOrder.getStatus());
         orderCompleted = false;
 

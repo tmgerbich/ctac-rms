@@ -1,10 +1,13 @@
 package com.rms.service;
 
 import com.rms.enums.OrderStatus;
+import com.rms.model.Ingredient;
+import com.rms.model.MenuItem;
 import com.rms.model.Order;
 import com.rms.model.Table;
 import com.rms.util.FileManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,5 +93,29 @@ public class OrderService {
     private void loadOrders() {
         orders = FileManager.loadOrders("orders.dat");
         nextOrderId = orders.size() > 0 ? orders.keySet().stream().max(Integer::compare).orElse(0) + 1 : 1;
+    }
+
+    public boolean subtractIngredients(Inventory inventory, Order order) {
+        ArrayList<MenuItem> orders = order.getItems();
+        List<Ingredient> successfullySubtracted = new ArrayList<>();
+
+        for (MenuItem item : orders) {
+            List<Ingredient> ingredients = item.getIngredients();
+            for (Ingredient ingredient : ingredients) {
+                boolean success = inventory.subtractIngredient(ingredient.getName(), ingredient.getQuantity());
+                if (success) {
+                    // Keep track of successfully subtracted ingredients for potential rollback
+                    successfullySubtracted.add(new Ingredient(ingredient.getName(), ingredient.getQuantity(), ingredient.getUnit()));
+                } else {
+                    // If subtraction fails, revert the previously subtracted ingredients
+                    for (Ingredient subtractedIngredient : successfullySubtracted) {
+                        inventory.addIngredient(subtractedIngredient);
+                    }
+                    return false; // Return false as the subtraction failed
+                }
+            }
+        }
+
+        return true; // Return true if all ingredients were successfully subtracted
     }
 }
