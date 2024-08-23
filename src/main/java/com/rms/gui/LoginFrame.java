@@ -96,7 +96,7 @@ public class LoginFrame extends JFrame {
     }
 
     private void handleGuestLogin() {
-        User guestUser = userService.getGuestUser();
+        User guestUser = userService.createGuestUser(); // Correct method name
         JOptionPane.showMessageDialog(this, "Logged in as Guest.");
         new RestaurantManagementApp(guestUser).setVisible(true);
         dispose(); // Close the login window
