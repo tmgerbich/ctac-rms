@@ -2,29 +2,16 @@
 Daily Sales Report
 Date: 2024-08-23
 ------------------------------
-Total Revenue: $16.00
+Total Revenue: $2.00
 
 Most Popular Items:
-1. Hamburger: 2 orders
-2. hot dog: 2 orders
+1. Cookie: 1 orders
 
 Table Sales:
-1. 1: $6.00
 
 Detailed Orders:
 Order ID: #1
 Items:
- - Hamburger: 1 ($5.0)
-Total: $5.0
-
-Order ID: #2
-Table ID: 1
-Items:
- - hot dog: 2 ($6.0)
-Total: $6.0
-
-Order ID: #3
-Items:
- - Hamburger: 1 ($5.0)
-Total: $5.0
+ - Cookie: 1 ($2.00)
+Total: $2.00
 

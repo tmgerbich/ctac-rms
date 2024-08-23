@@ -28,4 +28,5 @@ public class Manager extends User {
     public boolean canAddStaff() {
         return true; // Managers can add staff members
     }
+
 }

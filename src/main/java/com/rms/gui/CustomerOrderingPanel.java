@@ -9,6 +9,7 @@ import com.rms.service.OrderService;
 import com.rms.model.User;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class CustomerOrderingPanel extends JPanel {
     private Order currentOrder;
     private Timer resetMessageTimer;
     private boolean orderCompleted;
+    private JTable menuTable;
 
     public CustomerOrderingPanel(Menu menu, Inventory inventory, OrderService orderService, User currentUser) {
         this.menu = menu;
@@ -33,6 +35,7 @@ public class CustomerOrderingPanel extends JPanel {
         this.itemsInOrder = new ArrayList<>();
         this.currentOrder = null;
         this.orderCompleted = false;
+        this.menuTable = new JTable();
 
         setLayout(new BorderLayout());
 
@@ -57,7 +60,16 @@ public class CustomerOrderingPanel extends JPanel {
         refreshTimer.start();
     }
 
-    private JTable createMenuTable() {
+
+
+    public void resetMenuTable() {
+        DefaultTableModel model = (DefaultTableModel) menuTable.getModel();
+        model.setRowCount(0);
+        createMenuTable();
+    }
+
+
+    public JTable createMenuTable() {
         String[] columnNames = {"Name", "Description", "Price"};
         Object[][] data = menu.getAllMenuItems().stream()
                 .map(itemName -> {
@@ -201,9 +213,14 @@ public class CustomerOrderingPanel extends JPanel {
         }
     }
 
+    public OrderService getOrderService() {
+        return orderService;
+    }
+
     private void displayCompletedMessage() {
         // Display the completed message
         messageLabel.setText("Thanks, " + currentOrder.getName() + "! Your order status is: COMPLETED");
+        getOrderService().saveOrders();
 
         // Stop the refresh timer and set the orderCompleted flag
         orderCompleted = true;

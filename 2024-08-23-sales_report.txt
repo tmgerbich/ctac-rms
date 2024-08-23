@@ -1,0 +1,70 @@
+------------------------------
+Daily Sales Report
+Date: 2024-08-23
+------------------------------
+Total Revenue: $107.50
+
+Most Popular Items:
+1. Hamburger: 11 orders
+2. Popsicle: 3 orders
+3. Coke: 3 orders
+4. Cookie: 1 orders
+5. Cheeseburger: 1 orders
+6. Kid's Milk: 1 orders
+
+Table Sales:
+1. 1: $32.00
+2. 3: $16.00
+3. 6: $11.50
+
+Detailed Orders:
+Order ID: #1
+Table ID: 6
+Items:
+ - Cheeseburger: 1 ($5.00)
+ - Coke: 1 ($2.00)
+Total: $7.00
+
+Order ID: #2
+Items:
+ - Hamburger: 2 ($16.00)
+Total: $16.00
+
+Order ID: #3
+Items:
+ - Hamburger: 3 ($24.00)
+Total: $24.00
+
+Order ID: #4
+Table ID: 1
+Items:
+ - Hamburger: 4 ($32.00)
+Total: $32.00
+
+Order ID: #5
+Table ID: 6
+Items:
+ - Popsicle: 3 ($4.50)
+Total: $4.50
+
+Order ID: #6
+Table ID: 3
+Items:
+ - Hamburger: 2 ($16.00)
+Total: $16.00
+
+Order ID: #7
+Items:
+ - Cookie: 1 ($2.00)
+Total: $2.00
+
+Order ID: #8
+Items:
+ - Coke: 2 ($4.00)
+Total: $4.00
+
+Order ID: #9
+Items:
+ - Kid's Milk: 1 ($2.00)
+Total: $2.00
+

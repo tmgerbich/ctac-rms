@@ -38,6 +38,7 @@ public class RestaurantManagementApp extends JFrame {
         this.inventory = new Inventory();
         dayNewOrNot.setNewOrNot(DayNewOrNot.OLD);
         dayNewOrNot.saveDayNewOrNot();
+        orderService.saveOrders();
 
         setTitle("Restaurant Management System");
         setSize(800, 600);
@@ -86,8 +87,8 @@ public class RestaurantManagementApp extends JFrame {
             }
         }
 
-
-        tabbedPane.addTab("Guest Ordering", customerPanel);
+        if(isGuest){
+        tabbedPane.addTab("Guest Ordering", customerPanel);}
 
         // Add ChangeListener to the tabbed pane
         tabbedPane.addChangeListener(new ChangeListener() {
@@ -97,22 +98,30 @@ public class RestaurantManagementApp extends JFrame {
                 switch (selectedIndex) {
                     case 1: // Menu Management Tab
                         if (!isGuest) tablePanel.refreshTables();
+                        orderPanel.getOrderService().saveOrders();
                         break;
                     case 2: // Inventory Tab
                         if (!isGuest) inventoryPanel.updateInventoryTable();
+                        orderPanel.getOrderService().saveOrders();
                     case 3: // Table Orders tab
                         if (!isGuest) tablePanel.refreshTables();
+                        orderPanel.getOrderService().saveOrders();
                         break;
                     case 4: // Takeout Orders tab
                         if (!isGuest) takeoutPanel.updateTakeoutOrderTable();
+                        orderPanel.getOrderService().saveOrders();
                         break;
                     case 5: // Order Management tab
                         orderPanel.updateOrderTable();
+                        orderPanel.getOrderService().saveOrders();
                         break;
                     case 6: // Sales tab
                         salesPanel.populateReport();
+                        orderPanel.getOrderService().saveOrders();
                         break;
                     case 7: // Guest tab
+                        orderPanel.getOrderService().saveOrders();
+                        customerPanel.resetMenuTable();
                         break;
 
                     // Add cases for other tabs if needed
