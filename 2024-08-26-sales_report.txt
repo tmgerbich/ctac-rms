@@ -1,0 +1,32 @@
+------------------------------
+Daily Sales Report
+Date: 2024-08-26
+------------------------------
+Total Revenue: $6.00
+
+Most Popular Items:
+1. Cookie: 3 orders
+
+Takeout Sales:
+: $4.00
+
+Table Sales:
+1. 1: $2.00
+
+Detailed Orders:
+Order ID: #1
+Items:
+ - Cookie: 1 ($2.00)
+Total: $2.00
+
+Order ID: #2
+Items:
+ - Cookie: 1 ($2.00)
+Total: $2.00
+
+Order ID: #3
+Table ID: 1
+Items:
+ - Cookie: 1 ($2.00)
+Total: $2.00
+
