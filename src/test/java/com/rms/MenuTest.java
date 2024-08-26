@@ -190,8 +190,3 @@ class MenuTest {
     }
 
 }
-
-        String expectedOutput = "Menu:\nBurger\n";
-        assertEquals(expectedOutput, menu.toString(), "Menu string representation should match the expected output.");
-    }
-}
